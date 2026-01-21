@@ -1,0 +1,61 @@
+'use client';
+
+import React from 'react';
+
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+  hover?: boolean;
+  onClick?: () => void;
+}
+
+export const Card: React.FC<CardProps> = ({ children, className = '', hover = false, onClick }) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`
+        bg-white dark:bg-gray-800 rounded-lg shadow-md
+        p-6 border border-gray-200 dark:border-gray-700
+        transition-all duration-200
+        ${hover ? 'hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 cursor-pointer' : ''}
+        ${className}
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface CardHeaderProps {
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+}
+
+export const CardHeader: React.FC<CardHeaderProps> = ({ title, subtitle, action }) => {
+  return (
+    <div className="flex justify-between items-start mb-4">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+        {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
+      </div>
+      {action}
+    </div>
+  );
+};
+
+interface CardBodyProps {
+  children: React.ReactNode;
+}
+
+export const CardBody: React.FC<CardBodyProps> = ({ children }) => {
+  return <div className="space-y-4">{children}</div>;
+};
+
+interface CardFooterProps {
+  children: React.ReactNode;
+}
+
+export const CardFooter: React.FC<CardFooterProps> = ({ children }) => {
+  return <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">{children}</div>;
+};
