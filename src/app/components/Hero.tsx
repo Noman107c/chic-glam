@@ -2,10 +2,19 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, useReducedMotion } from 'framer-motion';
+import { fadeInUp, staggerContainer, beautyEasing, fitnessEasing } from './animations';
 
 export default function Hero() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <section className="relative w-full min-h-[90vh] flex flex-col lg:flex-row bg-white overflow-hidden">
+    <motion.section
+      className="relative w-full min-h-[90vh] flex flex-col lg:flex-row bg-white overflow-hidden"
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+    >
 
       {/* Left Side: Beauty Salon */}
       <div className="relative w-full lg:w-1/2 h-[50vh] lg:h-auto group overflow-hidden border-r border-gray-100">
@@ -20,15 +29,36 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/30 group-hover:bg-[#392d22]/40 transition-all duration-1000"></div>
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 sm:p-6 text-center">
-          <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-2 sm:mb-4 opacity-70">The Art of Chic</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 lg:mb-8 tracking-wide leading-tight">Beauty Salon</h2>
-          <Link href="/beauty-salon" className="group relative px-6 sm:px-8 lg:px-10 py-3 sm:py-4 overflow-hidden border border-white/30 backdrop-blur-sm transition-all hover:border-white">
-            <span className="relative z-10 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]">Explore Services</span>
-            <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <style jsx>{`.group:hover span { color: black; }`}</style>
-          </Link>
-        </div>
+        <motion.div
+          className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 sm:p-6 text-center"
+          variants={fadeInUp}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
+          <motion.span
+            className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-2 sm:mb-4 opacity-70"
+            variants={fadeInUp}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+          >
+            The Art of Chic
+          </motion.span>
+          <motion.h2
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 lg:mb-8 tracking-wide leading-tight"
+            variants={fadeInUp}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          >
+            Beauty Salon
+          </motion.h2>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+          >
+            <Link href="/beauty-salon" className="group relative px-6 sm:px-8 lg:px-10 py-3 sm:py-4 overflow-hidden border border-white/30 backdrop-blur-sm transition-all hover:border-white">
+              <span className="relative z-10 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]">Explore Services</span>
+              <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              <style jsx>{`.group:hover span { color: black; }`}</style>
+            </Link>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Right Side: Fitness Gym */}
@@ -43,15 +73,36 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/40 group-hover:bg-zinc-900/60 transition-all duration-1000"></div>
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 sm:p-6 text-center">
-          <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-2 sm:mb-4 opacity-70">The Power of Glam</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 lg:mb-8 tracking-wide leading-tight">Fitness Gym</h2>
-          <Link href="/fitness-gym" className="group relative px-6 sm:px-8 lg:px-10 py-3 sm:py-4 overflow-hidden border border-white/30 backdrop-blur-sm transition-all hover:border-white">
-            <span className="relative z-10 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]">Start Training</span>
-            <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <style jsx>{`.group:hover span { color: black; }`}</style>
-          </Link>
-        </div>
+        <motion.div
+          className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 sm:p-6 text-center"
+          variants={fadeInUp}
+          transition={{ ...fitnessEasing, duration: 0.8, delay: 0.2 }}
+        >
+          <motion.span
+            className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-2 sm:mb-4 opacity-70"
+            variants={fadeInUp}
+            transition={{ ...fitnessEasing, duration: 0.6, delay: 0.3 }}
+          >
+            The Power of Glam
+          </motion.span>
+          <motion.h2
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 lg:mb-8 tracking-wide leading-tight"
+            variants={fadeInUp}
+            transition={{ ...fitnessEasing, duration: 0.8, delay: 0.4 }}
+          >
+            Fitness Gym
+          </motion.h2>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ ...fitnessEasing, duration: 0.6, delay: 0.5 }}
+          >
+            <Link href="/fitness-gym" className="group relative px-6 sm:px-8 lg:px-10 py-3 sm:py-4 overflow-hidden border border-white/30 backdrop-blur-sm transition-all hover:border-white">
+              <span className="relative z-10 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]">Start Training</span>
+              <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              <style jsx>{`.group:hover span { color: black; }`}</style>
+            </Link>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Trust Bar (Bottom Overlay) - Minimalist Replacement for the Card */}
@@ -75,6 +126,6 @@ export default function Hero() {
       <div className="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce">
          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
       </div>
-    </section>
+    </motion.section>
   );
 }

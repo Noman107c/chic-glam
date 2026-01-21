@@ -1,44 +1,99 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
+import { fadeIn, slideInUp, staggerContainer } from '../components/animations';
+
+
 
 export default function About() {
   return (
     <main className="min-h-screen bg-white">
       {/* 1. Cinematic Header */}
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
-        <Image 
-          src="https://images.unsplash.com/photo-1497339100210-9e87df79c218?auto=format&fit=crop&q=80&w=2000" 
-          alt="Luxury Studio Ambience" 
-          fill 
+        <Image
+          src="https://images.unsplash.com/photo-1497339100210-9e87df79c218?auto=format&fit=crop&q=80&w=2000"
+          alt="Luxury Studio Ambience"
+          fill
           className="object-cover opacity-60 grayscale"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-white"></div>
-        <div className="relative z-10 text-center px-6">
-          <span className="text-[11px] uppercase tracking-[0.6em] text-white/80 mb-4 block">Est. Karachi</span>
-          <h1 className="text-5xl md:text-8xl font-serif text-white mb-4">Our <span className="italic">Heritage</span></h1>
-        </div>
+        <motion.div
+          className="relative z-10 text-center px-6"
+          initial="initial"
+          animate="animate"
+          variants={fadeIn}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <motion.span
+            className="text-[11px] uppercase tracking-[0.6em] text-white/80 mb-4 block"
+            variants={fadeIn}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            Est. Karachi
+          </motion.span>
+          <motion.h1
+            className="text-5xl md:text-8xl font-serif text-white mb-4"
+            variants={slideInUp}
+            transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+          >
+            Our <span className="italic">Heritage</span>
+          </motion.h1>
+        </motion.div>
       </section>
 
       {/* 2. The Narrative Section */}
-      <section className="py-24 max-w-7xl mx-auto px-6 lg:px-12">
+      <motion.section
+        className="py-24 max-w-7xl mx-auto px-6 lg:px-12"
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true, amount: 0.3 }}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-          
+
           {/* Left: Big Statement */}
-          <div className="lg:col-span-5">
-            <h2 className="text-4xl md:text-5xl font-serif text-[#392d22] leading-tight mb-8">
+          <motion.div
+            className="lg:col-span-5"
+            variants={slideInUp}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <motion.h2
+              className="text-4xl md:text-5xl font-serif text-[#392d22] leading-tight mb-8"
+              variants={slideInUp}
+              transition={{ duration: 0.9, ease: "easeOut" }}
+            >
               Chic & Glam is a <span className="italic text-gray-400">sanctuary</span> where self-care meets empowerment.
-            </h2>
+            </motion.h2>
             <div className="w-24 h-[1px] bg-[#392d22] mb-8"></div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-gray-400 font-bold">The Ash Beauty Bar Signature</p>
-          </div>
+            <motion.p
+              className="text-[11px] uppercase tracking-[0.3em] text-gray-400 font-bold"
+              variants={fadeIn}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+            >
+              The Ash Beauty Bar Signature
+            </motion.p>
+          </motion.div>
 
           {/* Right: Detailed Story */}
-          <div className="lg:col-span-7 space-y-8">
-            <p className="text-xl text-gray-500 font-light leading-relaxed">
+          <motion.div
+            className="lg:col-span-7 space-y-8"
+            variants={slideInUp}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          >
+            <motion.p
+              className="text-xl text-gray-500 font-light leading-relaxed"
+              variants={fadeIn}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+            >
               Located in the heart of Karachi, we have redefined the boundaries of traditional grooming. By merging the artistry of a high-end salon with the discipline of an elite fitness club, we provide a holistic journey for the modern individual.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8">
+            </motion.p>
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8"
+              variants={fadeIn}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.5 }}
+            >
               <div className="space-y-4">
                 <h4 className="text-sm font-bold uppercase tracking-widest text-[#392d22]">The Beauty Mission</h4>
                 <p className="text-sm text-gray-500 leading-loose">
@@ -51,10 +106,10 @@ export default function About() {
                   Strength is a luxury. Our gym is designed to be your private lab for transformation, led by trainers who prioritize longevity and science-backed results.
                 </p>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 3. The "Why" - Modern Values Grid */}
       <section className="py-24 bg-[#FAF9F6]">

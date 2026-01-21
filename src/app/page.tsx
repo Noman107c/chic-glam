@@ -3,6 +3,8 @@ import { ServiceSection } from './components/ServiceSection';
 import ReviewsSection from './components/ReviewsSection';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { fadeIn, slideInUp } from './components/animations';
 
 export default function Home() {
   const beautyServices = [

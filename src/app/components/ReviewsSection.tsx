@@ -1,4 +1,9 @@
+'use client';
+
+import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { fadeIn, slideInUp } from './animations';
 import Image from 'next/image';
+
 
 const reviews = [
   {
@@ -23,23 +28,44 @@ const reviews = [
 
 export default function ReviewsSection() {
   return (
-    <section className="py-24 bg-[#FCFBFA]">
+    <motion.section
+      className="py-24 bg-[#FCFBFA]"
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, amount: 0.3 }}
+    >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         {/* Trust Header Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-end mb-20">
-          <div className="lg:col-span-2">
-            <span className="text-[11px] uppercase tracking-[0.5em] text-[#392d22] font-bold mb-4 block">
+          <motion.div
+            className="lg:col-span-2"
+            variants={slideInUp}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <motion.span
+              className="text-[11px] uppercase tracking-[0.5em] text-[#392d22] font-bold mb-4 block"
+              variants={fadeIn}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
               Testimonials
-            </span>
-            <h2 className="text-5xl md:text-6xl font-serif text-[#392d22] leading-tight">
+            </motion.span>
+            <motion.h2
+              className="text-5xl md:text-6xl font-serif text-[#392d22] leading-tight"
+              variants={slideInUp}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
               Trusted by <span className="italic font-light">Thousands</span> <br/>
               of Confident Clients.
-            </h2>
-          </div>
+            </motion.h2>
+          </motion.div>
 
           {/* Main Stat Card */}
-          <div className="bg-white border border-gray-100 p-10 shadow-sm flex flex-col items-center text-center">
+          <motion.div
+            className="bg-white border border-gray-100 p-10 shadow-sm flex flex-col items-center text-center"
+            variants={slideInUp}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          >
              <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill="#392d22"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -48,13 +74,18 @@ export default function ReviewsSection() {
              <div className="text-4xl font-serif text-[#392d22] mb-1">100%</div>
              <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Recommendation Rate</p>
              <div className="mt-4 text-[12px] text-gray-500 font-light">Based on 413 Verified Reviews</div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reviews.map((review, index) => (
-            <div key={index} className="flex flex-col h-full group">
+            <motion.div
+              key={index}
+              className="flex flex-col h-full group"
+              variants={slideInUp}
+              transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+            >
               <div className="mb-6 flex-grow">
                 {/* Modern Quote Icon */}
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="text-[#392d22]/20 mb-6 group-hover:text-[#392d22]/40 transition-colors">
@@ -74,12 +105,16 @@ export default function ReviewsSection() {
                   <p className="text-[11px] tracking-widest text-gray-400 uppercase mt-1">{review.service}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Instagram / Social Preview Section */}
-        <div className="mt-32 relative group cursor-pointer overflow-hidden">
+        <motion.div
+          className="mt-32 relative group cursor-pointer overflow-hidden"
+          variants={fadeIn}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+        >
            <Image
              src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=2000"
              alt="Social Feed"
@@ -94,9 +129,9 @@ export default function ReviewsSection() {
               </div>
               <p className="text-gray-500 font-serif italic text-sm">Join our journey on Instagram</p>
            </div>
-        </div>
+        </motion.div>
 
       </div>
-    </section>
+    </motion.section>
   );
 }
