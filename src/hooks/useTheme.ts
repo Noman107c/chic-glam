@@ -20,7 +20,7 @@ export const useTheme = (): ThemeContextType => {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setThemeState(prev => {
+    setThemeState((prev: Theme) => {
       const newTheme = prev === 'light' ? 'dark' : 'light';
       setStorageItem('theme', newTheme);
       document.documentElement.classList.toggle('dark', newTheme === 'dark');

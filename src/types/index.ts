@@ -293,3 +293,10 @@ export interface BranchPerformance {
 export type UserRole = 'admin' | 'manager' | 'staff' | 'customer';
 
 export type TransactionType = 'income' | 'expense';
+
+export type Theme = 'light' | 'dark';
+
+export interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+}

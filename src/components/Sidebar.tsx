@@ -27,11 +27,10 @@ const MENU_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { label: 'Appointments', href: '/dashboard/appointments', icon: Calendar },
-  { label: 'Users', href: '/dashboard/users', icon: Users },
   { label: 'Services', href: '/dashboard/services', icon: Scissors },
   { label: 'Attendance', href: '/dashboard/attendance', icon: Clock },
   { label: 'Finance', href: '/dashboard/finance', icon: DollarSign },
-  { label: 'Roles & Permissions', href: '/dashboard/roles', icon: Lock },
+  { label: 'User Management', href: '/dashboard/roles', icon: Users },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 

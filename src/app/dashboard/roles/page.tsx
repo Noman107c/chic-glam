@@ -230,24 +230,7 @@ export default function RolesPage() {
             ]}
           />
 
-          {/* Permissions Reference */}
-          <Card>
-            <CardHeader title="Available Permissions" subtitle="Complete list of system permissions" />
-            <CardBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {PERMISSION_LIST.map(permission => (
-                  <div
-                    key={permission.id}
-                    className="p-3 rounded-lg bg-gray-50  border border-gray-200 "
-                  >
-                    <code className="text-sm font-mono text-blue-600 d">
-                      {permission.name}
-                    </code>
-                  </div>
-                ))}
-              </div>
-            </CardBody>
-          </Card>
+  
 
           {/* Create/Edit Modal */}
           <Modal

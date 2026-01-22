@@ -7,18 +7,17 @@ import { Menu, X, Moon, Sun, LogOut } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 
 const SIDEBAR_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { href: '/dashboard/users', label: 'Users', icon: '👥' },
-  { href: '/dashboard/roles', label: 'Roles', icon: '🔐' },
-  { href: '/dashboard/branches', label: 'Branches', icon: '🏢' },
-  { href: '/dashboard/finance', label: 'Finance', icon: '💰' },
+
+  { href: '/dashboard', label: 'Dashboard', icon: '🏠' },
+
   { href: '/dashboard/analytics', label: 'Analytics', icon: '📈' },
+  { href: '/dashboard/attendance', label: 'Attendance', icon: '⏰' },
+  { href: '/dashboard/finance', label: 'Finance', icon: '💰' },
+  { href: '/dashboard/roles', label: 'User Management', icon: '👥' },
   { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
 ];
-
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { isDark, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 

@@ -76,25 +76,25 @@ export default function Hero() {
         <motion.div
           className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 sm:p-6 text-center"
           variants={fadeInUp}
-          transition={{ ...fitnessEasing, duration: 0.8, delay: 0.2 }}
+          transition={{ ease: "easeOut", duration: 0.8, delay: 0.2 }}
         >
           <motion.span
             className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-2 sm:mb-4 opacity-70"
             variants={fadeInUp}
-            transition={{ ...fitnessEasing, duration: 0.6, delay: 0.3 }}
+            transition={{ ease: "easeOut", duration: 0.6, delay: 0.3 }}
           >
             The Power of Glam
           </motion.span>
           <motion.h2
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 lg:mb-8 tracking-wide leading-tight"
             variants={fadeInUp}
-            transition={{ ...fitnessEasing, duration: 0.8, delay: 0.4 }}
+            transition={{ ease: "easeOut", duration: 0.8, delay: 0.4 }}
           >
             Fitness Gym
           </motion.h2>
           <motion.div
             variants={fadeInUp}
-            transition={{ ...fitnessEasing, duration: 0.6, delay: 0.5 }}
+            transition={{ ease: "easeOut", duration: 0.6, delay: 0.5 }}
           >
             <Link href="/fitness-gym" className="group relative px-6 sm:px-8 lg:px-10 py-3 sm:py-4 overflow-hidden border border-white/30 backdrop-blur-sm transition-all hover:border-white">
               <span className="relative z-10 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]">Start Training</span>

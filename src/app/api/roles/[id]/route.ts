@@ -3,10 +3,11 @@ import { rolesService } from '@/lib/database';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const role = await rolesService.getById(params.id);
+    const { id } = await params;
+    const role = await rolesService.getById(id);
     return NextResponse.json({ data: role });
   } catch (error) {
     return NextResponse.json(
@@ -18,11 +19,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
-    const role = await rolesService.update(params.id, body);
+    const role = await rolesService.update(id, body);
     return NextResponse.json({ data: role });
   } catch (error) {
     return NextResponse.json(
@@ -34,10 +36,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await rolesService.delete(params.id);
+    const { id } = await params;
+    await rolesService.delete(id);
     return NextResponse.json({ data: { success: true } });
   } catch (error) {
     return NextResponse.json(

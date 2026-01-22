@@ -8,6 +8,57 @@ import {
   Role,
 } from '@/types';
 
+// Extended interfaces for mock data
+interface Permission {
+  id: string;
+  name: string;
+}
+
+interface Attendance {
+  id: string;
+  customer_name: string;
+  check_in: string;
+  check_out?: string;
+  sync_status: string;
+}
+
+interface Expense {
+  id: string;
+  title: string;
+  amount: number;
+  sync_status: string;
+  created_at: string;
+}
+
+interface Payment {
+  id: string;
+  customer_name: string;
+  amount: number;
+  payment_method: string;
+  status: string;
+  sync_status: string;
+  created_at: string;
+}
+
+interface Service {
+  id: string;
+  name: string;
+  price: number;
+  duration_minutes?: number;
+  created_at: string;
+}
+
+interface Appointment {
+  id: string;
+  customer_name: string;
+  service_id: string;
+  trainer_id: string;
+  appointment_time: string;
+  status: string;
+  sync_status: string;
+  created_at: string;
+}
+
 export const mockDashboardStats: DashboardStats = {
   totalSalons: 5,
   totalGyms: 3,
@@ -95,30 +146,123 @@ export const mockBranchPerformance: BranchPerformance[] = [
   },
 ];
 
+// Mock Permissions Data
+export const mockPermissions: Permission[] = [
+  { id: '1', name: 'users.create' },
+  { id: '2', name: 'users.read' },
+  { id: '3', name: 'users.update' },
+  { id: '4', name: 'users.delete' },
+  { id: '5', name: 'roles.create' },
+  { id: '6', name: 'roles.read' },
+  { id: '7', name: 'roles.update' },
+  { id: '8', name: 'roles.delete' },
+  { id: '9', name: 'permissions.read' },
+  { id: '10', name: 'attendance.create' },
+  { id: '11', name: 'attendance.read' },
+  { id: '12', name: 'services.read' },
+  { id: '13', name: 'services.create' },
+  { id: '14', name: 'booking.create' },
+  { id: '15', name: 'booking.read' },
+  { id: '16', name: 'booking.update' },
+  { id: '17', name: 'payments.create' },
+  { id: '18', name: 'payments.read' },
+];
+
+// Mock Roles Data
+export const mockRoles: Role[] = [
+  {
+    id: '1',
+    name: 'trainer',
+    description: 'Fitness trainer with access to gym facilities and client management',
+    permissions: ['user.read', 'booking.create', 'booking.read', 'booking.update', 'attendance.create', 'attendance.read'],
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: '2',
+    name: 'beautician',
+    description: 'Beauty specialist with access to salon services and client appointments',
+    permissions: ['user.read', 'booking.create', 'booking.read', 'booking.update', 'services.read', 'attendance.create', 'attendance.read'],
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: '3',
+    name: 'admin',
+    description: 'Administrator with full system access',
+    permissions: ['users.create', 'users.read', 'users.update', 'users.delete', 'roles.create', 'roles.read', 'roles.update', 'roles.delete', 'permissions.read', 'attendance.create', 'attendance.read', 'services.read', 'services.create', 'booking.create', 'booking.read', 'booking.update', 'payments.create', 'payments.read'],
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: '4',
+    name: 'manager',
+    description: 'Branch manager with operational oversight',
+    permissions: ['users.read', 'users.update', 'attendance.read', 'services.read', 'booking.read', 'booking.update', 'payments.read'],
+    createdAt: new Date('2024-01-01'),
+  },
+];
+
 export const mockUsers: User[] = [
   {
     id: '1',
-    name: 'Ahmed Khan',
-    firstName: 'Ahmed',
-    lastName: 'Khan',
-    email: 'ahmed@example.com',
+    name: 'Super Admin',
+    firstName: 'Super',
+    lastName: 'Admin',
+    email: 'noman@gmail.com',
     phone: '+92 300 1234567',
-    role: 'SUPER_ADMIN' as any,
+    role: 'admin' as any,
     isActive: true,
-    createdAt: new Date(),
+    createdAt: new Date('2024-01-01'),
     updatedAt: new Date(),
   },
   {
     id: '2',
-    name: 'Fatima Ali',
-    firstName: 'Fatima',
-    lastName: 'Ali',
-    email: 'fatima@example.com',
-    phone: '+92 300 7654321',
-    role: 'BRANCH_ADMIN' as any,
+    name: 'John Trainer',
+    firstName: 'John',
+    lastName: 'Trainer',
+    email: 'trainer@chicglam.com',
+    phone: '+92 300 2345678',
+    role: 'trainer' as any,
+    branchId: '2',
+    isActive: true,
+    createdAt: new Date('2024-01-02'),
+    updatedAt: new Date(),
+  },
+  {
+    id: '3',
+    name: 'Sarah Beautician',
+    firstName: 'Sarah',
+    lastName: 'Beautician',
+    email: 'beautician@chicglam.com',
+    phone: '+92 300 3456789',
+    role: 'beautician' as any,
     branchId: '1',
     isActive: true,
-    createdAt: new Date(),
+    createdAt: new Date('2024-01-02'),
+    updatedAt: new Date(),
+  },
+  {
+    id: '4',
+    name: 'Mike Trainer',
+    firstName: 'Mike',
+    lastName: 'Trainer',
+    email: 'trainer2@chicglam.com',
+    phone: '+92 300 4567890',
+    role: 'trainer' as any,
+    branchId: '4',
+    isActive: true,
+    createdAt: new Date('2024-01-03'),
+    updatedAt: new Date(),
+  },
+  {
+    id: '5',
+    name: 'Emma Beautician',
+    firstName: 'Emma',
+    lastName: 'Beautician',
+    email: 'beautician2@chicglam.com',
+    phone: '+92 300 5678901',
+    role: 'beautician' as any,
+    branchId: '3',
+    isActive: true,
+    createdAt: new Date('2024-01-03'),
     updatedAt: new Date(),
   },
 ];
