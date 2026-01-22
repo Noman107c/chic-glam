@@ -152,8 +152,8 @@ export default function BranchesPage() {
       {/* Page Header */}
       <div className="flex justify-between items-center flex-col md:flex-row gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Branches</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage all salons and gym locations</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Branches</h1>
+          <p className="text-gray-700">Manage all salons and gym locations</p>
         </div>
         <Button variant="primary" onClick={handleCreateBranch}>
           + Add Branch
@@ -165,30 +165,30 @@ export default function BranchesPage() {
         <Card>
           <CardBody>
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-2xl font-bold text-blue-600">
                 {branches.filter(b => b.type === 'SALON').length}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Salons</p>
+              <p className="text-sm text-gray-700">Salons</p>
             </div>
           </CardBody>
         </Card>
         <Card>
           <CardBody>
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              <p className="text-2xl font-bold text-purple-600">
                 {branches.filter(b => b.type === 'GYM').length}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Gyms</p>
+              <p className="text-sm text-gray-700">Gyms</p>
             </div>
           </CardBody>
         </Card>
         <Card>
           <CardBody>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <p className="text-2xl font-bold text-green-600">
                 {branches.filter(b => b.isActive).length}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Active</p>
+              <p className="text-sm text-gray-700">Active</p>
             </div>
           </CardBody>
         </Card>

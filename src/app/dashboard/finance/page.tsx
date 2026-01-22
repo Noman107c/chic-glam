@@ -105,7 +105,7 @@ export default function FinancePage() {
       key: 'amount',
       label: 'Amount',
       render: (value: number, row: Transaction) => (
-        <span className={row.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+        <span className={row.type === 'income' ? 'text-green-600' : 'text-red-600'}>
           {row.type === 'income' ? '+' : '-'}{formatCurrency(value)}
         </span>
       ),
@@ -149,38 +149,38 @@ export default function FinancePage() {
     <div className="space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Finance</h1>
-        <p className="text-gray-600 dark:text-gray-400">Manage financial transactions and invoices</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Finance</h1>
+        <p className="text-gray-700">Manage financial transactions and invoices</p>
       </div>
 
       {/* Financial Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6  p-6 ">
         <Card>
           <CardBody>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <p className="text-sm font-medium text-gray-700 mb-2 ">
               Total Income
             </p>
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+            <p className="text-3xl font-bold text-green-600">
               {formatCurrency(totalIncome)}
             </p>
           </CardBody>
         </Card>
         <Card>
           <CardBody>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <p className="text-sm font-medium text-gray-700 mb-2">
               Total Expense
             </p>
-            <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+            <p className="text-3xl font-bold text-red-600">
               {formatCurrency(totalExpense)}
             </p>
           </CardBody>
         </Card>
         <Card>
           <CardBody>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <p className="text-sm font-medium text-gray-700 mb-2">
               Net Profit
             </p>
-            <p className={`text-3xl font-bold ${netProfit >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
+            <p className={`text-3xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
               {formatCurrency(netProfit)}
             </p>
           </CardBody>
@@ -188,15 +188,15 @@ export default function FinancePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex gap-2 border-b border-gray-200">
         {['overview', 'transactions', 'invoices'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as any)}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${
               activeTab === tab
-                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -214,21 +214,21 @@ export default function FinancePage() {
                 {transactions.slice(0, 5).map(transaction => (
                   <div
                     key={transaction.id}
-                    className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900"
+                    className="flex justify-between items-center p-3 rounded-lg bg-gray-50"
                   >
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900">
                         {transaction.description}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-gray-500">
                         {transaction.category}
                       </p>
                     </div>
                     <span
                       className={`text-lg font-bold ${
                         transaction.type === 'income'
-                          ? 'text-green-600 dark:text-green-400'
-                          : 'text-red-600 dark:text-red-400'
+                          ? 'text-green-600'
+                          : 'text-red-600'
                       }`}
                     >
                       {transaction.type === 'income' ? '+' : '-'}

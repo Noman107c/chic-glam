@@ -36,19 +36,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className={`flex h-screen ${isDark ? 'dark' : ''}`}>
+    <div className="flex h-screen bg-white">
       {/* Sidebar */}
       <aside
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
-        } bg-gray-900 text-white transition-all duration-300 flex flex-col overflow-hidden`}
+        } bg-gray-100 text-gray-900 transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-200`}
       >
         {/* Logo */}
-        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-          {sidebarOpen && <h1 className="text-xl font-bold">Chic Glam</h1>}
+        <div className="p-4 border-b border-gray-300 flex items-center justify-between bg-white">
+          {sidebarOpen && <h1 className="text-xl font-bold text-gray-900">Chic Glam</h1>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
           >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors group"
+              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors group text-gray-700 hover:text-gray-900"
               title={!sidebarOpen ? item.label : ''}
             >
               <span className="text-xl">{item.icon}</span>
@@ -70,18 +70,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-800 space-y-2">
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-            title={!sidebarOpen ? 'Toggle Theme' : ''}
-          >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-            {sidebarOpen && <span className="text-sm font-medium">Theme</span>}
-          </button>
+        <div className="p-4 border-t border-gray-300 space-y-2 bg-white">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-900 transition-colors text-red-400"
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors text-red-600 hover:text-red-700"
             title={!sidebarOpen ? 'Logout' : ''}
           >
             <LogOut size={20} />
@@ -91,17 +83,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-gray-900">
+      <main className="flex-1 flex flex-col overflow-hidden bg-white">
         {/* Top Bar */}
-        <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h2>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">Admin Dashboard</h2>
+          <div className="text-sm text-gray-600">
             Admin User
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">{children}</div>
       </main>
     </div>
   );

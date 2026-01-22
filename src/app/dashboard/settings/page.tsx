@@ -49,8 +49,8 @@ export default function SettingsPage() {
     <div className="space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Settings</h1>
-        <p className="text-gray-600 dark:text-gray-400">Manage system configuration and preferences</p>
+        <h1 className="text-4xl font-bold text-gray-900   mb-2">Settings</h1>
+        <p className="text-gray-600  ">Manage system configuration and preferences</p>
       </div>
 
       {/* Company Information */}
@@ -118,7 +118,7 @@ export default function SettingsPage() {
         <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Primary Color
               </label>
               <div className="flex items-center gap-3">
@@ -129,11 +129,11 @@ export default function SettingsPage() {
                   disabled={!isEditing}
                   className="w-12 h-12 rounded-lg cursor-pointer"
                 />
-                <span className="text-gray-600 dark:text-gray-400">{settings.primaryColor}</span>
+                <span className="text-gray-600">{settings.primaryColor}</span>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Secondary Color
               </label>
               <div className="flex items-center gap-3">
@@ -144,7 +144,7 @@ export default function SettingsPage() {
                   disabled={!isEditing}
                   className="w-12 h-12 rounded-lg cursor-pointer"
                 />
-                <span className="text-gray-600 dark:text-gray-400">{settings.secondaryColor}</span>
+                <span className="text-gray-600">{settings.secondaryColor}</span>
               </div>
             </div>
           </div>
@@ -205,8 +205,8 @@ export default function SettingsPage() {
                 className="w-4 h-4 rounded"
               />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Email Notifications</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Receive updates via email</p>
+                <p className="font-medium text-gray-900">Email Notifications</p>
+                <p className="text-sm text-gray-500">Receive updates via email</p>
               </div>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
@@ -217,8 +217,8 @@ export default function SettingsPage() {
                 className="w-4 h-4 rounded"
               />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">SMS Notifications</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Receive alerts via SMS</p>
+                <p className="font-medium text-gray-900">SMS Notifications</p>
+                <p className="text-sm text-gray-500">Receive alerts via SMS</p>
               </div>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
@@ -229,8 +229,8 @@ export default function SettingsPage() {
                 className="w-4 h-4 rounded"
               />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Daily Data Backup</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Automatically backup data daily</p>
+                <p className="font-medium text-gray-900">Daily Data Backup</p>
+                <p className="text-sm text-gray-500">Automatically backup data daily</p>
               </div>
             </label>
           </div>
@@ -243,7 +243,7 @@ export default function SettingsPage() {
         <CardBody>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Auto Logout (minutes)
               </label>
               <input
@@ -252,9 +252,9 @@ export default function SettingsPage() {
                 max="120"
                 value={settings.autoLogoutMinutes}
                 onChange={e => handleChange('autoLogoutMinutes', parseInt(e.target.value))}
-                className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 bg-white text-gray-900"
               />
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 User will be logged out after this period of inactivity
               </p>
             </div>
@@ -286,16 +286,17 @@ export default function SettingsPage() {
         <CardBody>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Application Version</span>
-              <span className="font-medium text-gray-900 dark:text-white">1.0.0</span>
+              <span className="text-gray-600  ">Application Version</span>
+              <span className="font-medium text-gray-900  ">1.0.0</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Database Version</span>
-              <span className="font-medium text-gray-900 dark:text-white">1.0.0</span>
+              <span className="text-gray-600 ">Database Version</span>
+
+              <span className="font-medium text-gray-900  ">1.0.0</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Last Updated</span>
-              <span className="font-medium text-gray-900 dark:text-white">Jan 21, 2026</span>
+              <span className="text-gray-600  ">Last Updated</span>
+              <span className="font-medium text-gray-900  ">Jan 21, 2026</span>
             </div>
           </div>
         </CardBody>

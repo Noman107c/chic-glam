@@ -40,8 +40,8 @@ export default function AnalyticsPage() {
     <div className="space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Analytics & Reports</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Analytics & Reports</h1>
+        <p className="text-gray-700">
           Detailed insights into your business performance
         </p>
       </div>
@@ -110,26 +110,26 @@ export default function AnalyticsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b-2 border-gray-200 dark:border-gray-700">
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                <tr className="border-b-2 border-gray-200">
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
                     Branch Name
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Revenue
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Expenses
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Profit
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Margin %
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Members
                   </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
                     Bookings
                   </th>
                 </tr>
@@ -140,27 +140,27 @@ export default function AnalyticsPage() {
                   return (
                     <tr
                       key={branch.branchId}
-                      className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 font-medium text-gray-900">
                         {branch.branchName}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 text-right text-gray-900">
                         ${branch.revenue.toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 text-right text-gray-900">
                         ${branch.expenses.toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-green-600 dark:text-green-400">
+                      <td className="px-4 py-3 text-right font-semibold text-green-600">
                         ${branch.profit.toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 text-right text-gray-900">
                         {margin}%
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 text-right text-gray-900">
                         {branch.memberCount}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 text-right text-gray-900">
                         {branch.bookingCount}
                       </td>
                     </tr>
@@ -185,8 +185,8 @@ export default function AnalyticsPage() {
                 { name: 'Membership Plans', revenue: 15600 },
               ].map((service, index) => (
                 <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-700 dark:text-gray-300">{service.name}</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="text-gray-700">{service.name}</span>
+                  <span className="font-semibold text-gray-900">
                     ${service.revenue.toLocaleString()}
                   </span>
                 </div>
@@ -206,15 +206,15 @@ export default function AnalyticsPage() {
                 { hour: '12 PM - 1 PM', bookings: 28 },
               ].map((slot, index) => (
                 <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-700 dark:text-gray-300">{slot.hour}</span>
+                  <span className="text-gray-700 ">{slot.hour}</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="w-32 h-2 bg-gray-200  rounded-full overflow-hidden">
                       <div
                         className="h-full bg-blue-500"
                         style={{ width: `${(slot.bookings / 42) * 100}%` }}
                       />
                     </div>
-                    <span className="font-semibold text-gray-900 dark:text-white w-8">
+                    <span className="font-semibold text-gray-900  w-8">
                       {slot.bookings}
                     </span>
                   </div>

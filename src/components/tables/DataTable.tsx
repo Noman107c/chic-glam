@@ -62,11 +62,11 @@ export function DataTable<T extends { id: string }>(
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-700">
+            <tr className="border-b border-gray-200 ">
               {columns.map(column => (
                 <th
                   key={String(column.key)}
-                  className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900"
+                  className="px-4 py-3 text-left font-semibold text-gray-700 bg-gray-50 "
                   onClick={() => column.sortable && handleSort(column.key)}
                   style={{ width: column.width }}
                 >
@@ -80,7 +80,7 @@ export function DataTable<T extends { id: string }>(
                   </div>
                 </th>
               ))}
-              {actions && <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900">Actions</th>}
+              {actions && <th className="px-4 py-3 text-left font-semibold text-gray-700  bg-gray-50 ">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -92,7 +92,7 @@ export function DataTable<T extends { id: string }>(
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + (actions ? 1 : 0)} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={columns.length + (actions ? 1 : 0)} className="px-4 py-8 text-center text-gray-500">
                   No data found
                 </td>
               </tr>
@@ -100,11 +100,11 @@ export function DataTable<T extends { id: string }>(
               data.map(row => (
                 <tr
                   key={row.id}
-                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                   onClick={() => onRowClick?.(row)}
                 >
                   {columns.map(column => (
-                    <td key={String(column.key)} className="px-4 py-3 text-gray-900 dark:text-gray-100" style={{ width: column.width }}>
+                    <td key={String(column.key)} className="px-4 py-3 text-gray-900" style={{ width: column.width }}>
                       {column.render ? column.render(row[column.key], row) : String(row[column.key])}
                     </td>
                   ))}
@@ -120,8 +120,8 @@ export function DataTable<T extends { id: string }>(
                             }}
                             className={`text-xs px-2 py-1 rounded transition-colors ${
                               action.variant === 'danger'
-                                ? 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-200'
-                                : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200'
+                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                             }`}
                           >
                             {action.label}
@@ -138,22 +138,22 @@ export function DataTable<T extends { id: string }>(
       </div>
 
       {pagination && data.length > 0 && (
-        <div className="flex justify-between items-center p-4 border-t border-gray-200 dark:border-gray-700">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex justify-between items-center p-4 border-t border-gray-200">
+          <span className="text-sm text-gray-600">
             Page {pagination.page} of {Math.ceil(pagination.total / pagination.pageSize)} ({pagination.total} total)
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => pagination.onPageChange(pagination.page - 1)}
               disabled={pagination.page === 1}
-              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               Previous
             </button>
             <button
               onClick={() => pagination.onPageChange(pagination.page + 1)}
               disabled={pagination.page >= Math.ceil(pagination.total / pagination.pageSize)}
-              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               Next
             </button>

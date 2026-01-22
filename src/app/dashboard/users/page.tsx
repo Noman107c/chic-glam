@@ -196,8 +196,8 @@ export default function UsersPage() {
       {/* Page Header */}
       <div className="flex justify-between items-center flex-col md:flex-row gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Users</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage system users and permissions</p>
+          <h1 className="text-4xl font-bold text-gray-900  mb-2">Users</h1>
+          <p className="text-gray-600 ">Manage system users and permissions</p>
         </div>
         <Button variant="primary" onClick={handleCreateUser}>
           + Add User
@@ -205,7 +205,7 @@ export default function UsersPage() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
         <Input
           placeholder="Search by name or email..."
           value={searchTerm}
@@ -217,7 +217,6 @@ export default function UsersPage() {
           options={[
             { value: '', label: 'All Roles' },
             { value: 'SUPER_ADMIN', label: 'Super Admin' },
-            { value: 'BRANCH_ADMIN', label: 'Branch Admin' },
             { value: 'SALON_MANAGER', label: 'Salon Manager' },
             { value: 'GYM_MANAGER', label: 'Gym Manager' },
             { value: 'TRAINER', label: 'Trainer' },
@@ -227,7 +226,7 @@ export default function UsersPage() {
             { value: 'CUSTOMER', label: 'Customer' },
           ]}
         />
-        <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+        <div className="text-sm text-white flex items-center">
           {filteredUsers.length} users
         </div>
       </div>

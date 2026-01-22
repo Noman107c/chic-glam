@@ -14,6 +14,7 @@ export interface Role {
   id: string;
   name: string;
   description?: string;
+  permissions?: string[];
   created_at: string;
 }
 

@@ -1,14 +1,19 @@
-# Fix TypeScript Errors
+# Staff API Development for Trainer/Beautician Management
 
-## Service Files - Add missing 'message' property to error responses
-- [ ] src/services/auth.service.ts - 3 locations
-- [ ] src/services/user.service.ts - 10 locations
-- [ ] src/services/branch.service.ts - 6 locations
-- [ ] src/services/finance.service.ts - 7 locations
+## Tasks to Complete
+- [x] Create Login API (/api/auth/login): Authenticate users and determine role (trainer/beautician) for dashboard routing
+- [x] Create Staff Service (staff.service.ts): Attendance and salary management methods
+- [x] Create Staff Attendance API (/api/staff/attendance): Check-in, check-out, history endpoints
+- [x] Create Staff Salary API (/api/staff/salary): Salary history, calculations, and management
+- [ ] Test APIs: Verify endpoints work correctly with proper authentication
+- [ ] Update documentation: Add API endpoints to API_DOCUMENTATION.md
 
-## Users Page - Handle optional fields and type issues
-- [ ] src/app/dashboard/users/page.tsx - Handle optional firstName/lastName in filters and form
-- [ ] src/app/dashboard/users/page.tsx - Fix role type casting
+## API Endpoints Created
+- POST /api/auth/login - User authentication with role-based dashboard determination
+- GET/POST /api/staff/attendance - Staff attendance management (check-in/out/history)
+- GET/POST /api/staff/salary - Staff salary management (history/calculations)
 
-## Verification
-- [ ] Run TypeScript check to ensure all errors are resolved
+## Progress Tracking
+- Started: [Current Session]
+- Completed: Login API, Staff Service, Attendance API, Salary API
+- Remaining: Testing, Documentation

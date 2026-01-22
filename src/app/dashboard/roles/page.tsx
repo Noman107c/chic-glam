@@ -1,6 +1,6 @@
  'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
@@ -8,37 +8,8 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { DataTable, Column } from '@/components/tables/DataTable';
 import { Badge } from '@/components/ui/Badge';
+import { Toast } from '@/components/ui/Toast';
 import { Role, Permission, PERMISSION_LIST } from '@/types';
-
-const MOCK_ROLES: Role[] = [
-  {
-    id: '1',
-    name: 'Super Admin',
-    description: 'Full system access',
-    permissions: PERMISSION_LIST.map(p => p.name),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isActive: true,
-  },
-  {
-    id: '2',
-    name: 'Branch Admin',
-    description: 'Manage branch operations',
-    permissions: ['user.read', 'user.update', 'finance.read'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isActive: true,
-  },
-  {
-    id: '3',
-    name: 'Salon Manager',
-    description: 'Manage salon operations',
-    permissions: ['user.read', 'finance.read'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isActive: true,
-  },
-];
 
 interface RoleForm {
   name: string;
@@ -47,7 +18,7 @@ interface RoleForm {
 }
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState(MOCK_ROLES);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [form, setForm] = useState<RoleForm>({
@@ -55,6 +26,29 @@ export default function RolesPage() {
     description: '',
     permissions: [],
   });
+  const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Fetch roles from API on mount
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      setPageLoading(true);
+      const response = await fetch('/api/roles');
+      if (!response.ok) throw new Error('Failed to fetch roles');
+      const data = await response.json();
+      setRoles(data.data || []);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      setToast({ message: 'Failed to load roles', type: 'error' });
+    } finally {
+      setPageLoading(false);
+    }
+  }
 
   const columns: Column<Role>[] = [
     {
@@ -105,42 +99,78 @@ export default function RolesPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveRole = () => {
-    if (selectedRole) {
-      // Update existing role
-      setRoles(
-        roles.map(r =>
-          r.id === selectedRole.id
-            ? {
-                ...r,
-                name: form.name,
-                description: form.description,
-                permissions: form.permissions,
-                updatedAt: new Date(),
-              }
-            : r
-        )
-      );
-    } else {
-      // Create new role
-      setRoles([
-        ...roles,
-        {
-          id: String(roles.length + 1),
-          name: form.name,
-          description: form.description,
-          permissions: form.permissions,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          isActive: true,
-        },
-      ]);
+  const handleSaveRole = async () => {
+    if (!form.name || form.permissions.length === 0) {
+      setToast({ message: 'Please fill in all required fields', type: 'error' });
+      return;
     }
-    setIsModalOpen(false);
+
+    try {
+      setLoading(true);
+      const roleData = {
+        name: form.name,
+        description: form.description,
+        permissions: form.permissions,
+      };
+
+      if (selectedRole) {
+        // Update existing role
+        const response = await fetch(`/api/roles/${selectedRole.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(roleData),
+        });
+
+        if (!response.ok) throw new Error('Failed to update role');
+        const data = await response.json();
+        
+        setRoles(
+          roles.map(r => (r.id === selectedRole.id ? data.data : r))
+        );
+        setToast({ message: 'Role updated successfully', type: 'success' });
+      } else {
+        // Create new role
+        const response = await fetch('/api/roles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(roleData),
+        });
+
+        if (!response.ok) throw new Error('Failed to create role');
+        const data = await response.json();
+        setRoles([...roles, data.data]);
+        setToast({ message: 'Role created successfully', type: 'success' });
+      }
+
+      setIsModalOpen(false);
+      setForm({ name: '', description: '', permissions: [] });
+      setSelectedRole(null);
+    } catch (error) {
+      console.error('Error saving role:', error);
+      setToast({ message: error instanceof Error ? error.message : 'Failed to save role', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteRole = (role: Role) => {
-    setRoles(roles.filter(r => r.id !== role.id));
+  const handleDeleteRole = async (role: Role) => {
+    if (!confirm('Are you sure you want to delete this role?')) return;
+
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/roles/${role.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to delete role');
+      setRoles(roles.filter(r => r.id !== role.id));
+      setToast({ message: 'Role deleted successfully', type: 'success' });
+    } catch (error) {
+      console.error('Error deleting role:', error);
+      setToast({ message: error instanceof Error ? error.message : 'Failed to delete role', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePermissionToggle = (permission: string) => {
@@ -154,116 +184,132 @@ export default function RolesPage() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Roles & Permissions
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage system roles and permissions</p>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      {pageLoading ? (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-gray-500">Loading roles...</div>
         </div>
-        <Button variant="primary" onClick={handleCreateRole}>
-          + Create Role
-        </Button>
-      </div>
-
-      {/* Roles Table */}
-      <DataTable
-        columns={columns}
-        data={roles}
-        title="System Roles"
-        actions={[
-          {
-            label: 'Edit',
-            onClick: handleEditRole,
-            variant: 'secondary',
-          },
-          {
-            label: 'Delete',
-            onClick: handleDeleteRole,
-            variant: 'danger',
-          },
-        ]}
-      />
-
-      {/* Permissions Reference */}
-      <Card>
-        <CardHeader title="Available Permissions" subtitle="Complete list of system permissions" />
-        <CardBody>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PERMISSION_LIST.map(permission => (
-              <div
-                key={permission.id}
-                className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-              >
-                <code className="text-sm font-mono text-blue-600 dark:text-blue-400">
-                  {permission.name}
-                </code>
-              </div>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Create/Edit Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        title={selectedRole ? 'Edit Role' : 'Create New Role'}
-        onClose={() => setIsModalOpen(false)}
-        size="lg"
-        footer={
-          <>
-            <Button
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleSaveRole}
-              disabled={!form.name || form.permissions.length === 0}
-            >
-              {selectedRole ? 'Update Role' : 'Create Role'}
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <Input
-            label="Role Name"
-            value={form.name}
-            onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="e.g., Gym Manager"
-          />
-
-          <Input
-            label="Description"
-            value={form.description}
-            onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
-            placeholder="Describe the role's purpose"
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Permissions ({form.permissions.length} selected)
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-              {PERMISSION_LIST.map(permission => (
-                <label key={permission.id} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.permissions.includes(permission.name)}
-                    onChange={() => handlePermissionToggle(permission.name)}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{permission.name}</span>
-                </label>
-              ))}
+      ) : (
+        <>
+          {/* Page Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Roles & Permissions
+              </h1>
+              <p className="text-gray-700">Manage system roles and permissions</p>
             </div>
+            <Button variant="primary" onClick={handleCreateRole}>
+              + Create Role
+            </Button>
           </div>
-        </div>
-      </Modal>
+
+          {/* Roles Table */}
+          <DataTable
+            columns={columns}
+            data={roles}
+            title="System Roles"
+            actions={[
+              {
+                label: 'Edit',
+                onClick: handleEditRole,
+                variant: 'secondary',
+              },
+              {
+                label: 'Delete',
+                onClick: handleDeleteRole,
+                variant: 'danger',
+              },
+            ]}
+          />
+
+          {/* Permissions Reference */}
+          <Card>
+            <CardHeader title="Available Permissions" subtitle="Complete list of system permissions" />
+            <CardBody>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {PERMISSION_LIST.map(permission => (
+                  <div
+                    key={permission.id}
+                    className="p-3 rounded-lg bg-gray-50  border border-gray-200 "
+                  >
+                    <code className="text-sm font-mono text-blue-600 d">
+                      {permission.name}
+                    </code>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+
+          {/* Create/Edit Modal */}
+          <Modal
+            isOpen={isModalOpen}
+            title={selectedRole ? 'Edit Role' : 'Create New Role'}
+            onClose={() => setIsModalOpen(false)}
+            size="lg"
+            footer={
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleSaveRole}
+                  disabled={!form.name || form.permissions.length === 0 || loading}
+                >
+                  {loading ? '...' : selectedRole ? 'Update Role' : 'Create Role'}
+                </Button>
+              </>
+            }
+          >
+            <div className="space-y-4">
+              <Input
+                label="Role Name"
+                value={form.name}
+                onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="e.g., Gym Manager"
+              />
+
+              <Input
+                label="Description"
+                value={form.description}
+                onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Describe the role's purpose"
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Permissions ({form.permissions.length} selected)
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  {PERMISSION_LIST.map(permission => (
+                    <label key={permission.id} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.permissions.includes(permission.name)}
+                        onChange={() => handlePermissionToggle(permission.name)}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm text-gray-700">{permission.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Modal>
+        </>
+      )}
     </div>
   );
 }

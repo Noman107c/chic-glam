@@ -14,7 +14,7 @@ const variantClasses = {
   secondary: 'bg-purple-500 hover:bg-purple-600 text-white',
   danger: 'bg-red-500 hover:bg-red-600 text-white',
   success: 'bg-green-500 hover:bg-green-600 text-white',
-  outline: 'border-2 border-gray-300 hover:bg-gray-50 text-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:text-gray-200',
+  outline: 'border-2 border-gray-300 hover:bg-gray-50 text-gray-700 ',
 };
 
 const sizeClasses = {

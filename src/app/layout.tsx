@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../styles/globals.css";
-import { DashboardLayout } from "@/components/DashboardLayout";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import ConditionalLayout from "./components/ConditionalLayout";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "Chic Glam",
-  description: "Your one-stop solution for managing your salon.",
+  title: "Chic & Glam - Beauty Salon & Fitness Gym",
+  description: "Where chic meets glam. We create confidence through beauty and fitness services in Karachi, Pakistan.",
 };
 
 export default function RootLayout({
@@ -16,11 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
-        <DashboardLayout>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ConditionalLayout>
           {children}
-        </DashboardLayout>
+        </ConditionalLayout>
       </body>
     </html>
   );

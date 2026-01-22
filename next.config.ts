@@ -6,9 +6,11 @@ const withPWA = require("next-pwa")({
   disable: process.env.NODE_ENV === "development",
 })
 
-const nextConfig: NextConfig = withPWA({
-  reactStrictMode: true,
-  turbopack: {},
-});
+const nextConfig: NextConfig = {
+  /* config options here */
+    images: {
+    domains: ['images.unsplash.com'],
+  },
+};
 
 export default nextConfig;
