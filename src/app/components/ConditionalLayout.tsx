@@ -12,12 +12,13 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard');
   const isAuthLogin = pathname === '/auth/login';
+  const isPOSPage = pathname === '/';
 
   return (
     <>
-      {!isDashboard && !isAuthLogin && <Header />}
+      {!isDashboard && !isAuthLogin && !isPOSPage && <Header />}
       {children}
-      {!isDashboard && !isAuthLogin && <Footer />}
+      {!isDashboard && !isAuthLogin && !isPOSPage && <Footer />}
     </>
   );
 }

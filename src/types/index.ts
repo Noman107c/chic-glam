@@ -7,7 +7,6 @@ export interface User {
   email: string;
   phone?: string;
   role: Role | string;
-  branchId?: string;
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -51,39 +50,7 @@ export const PERMISSION_LIST = [
   { id: '16', name: 'settings.manage' },
 ]
 
-export interface Branch {
-  id: string;
-  name: string;
-  type: 'SALON' | 'GYM' | 'BOTH';
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  phone: string;
-  email: string;
-  managerId?: string;
-  workingHours: WorkingHours;
-  services: Service[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
-export interface WorkingHours {
-  monday: TimeSlot;
-  tuesday: TimeSlot;
-  wednesday: TimeSlot;
-  thursday: TimeSlot;
-  friday: TimeSlot;
-  saturday: TimeSlot;
-  sunday: TimeSlot;
-}
-
-export interface TimeSlot {
-  open: string;
-  close: string;
-  isClosed: boolean;
-}
 
 export interface Service {
   id: string;
@@ -92,7 +59,6 @@ export interface Service {
   price: number;
   duration: number; // in minutes
   category: string;
-  branchId: string;
   isActive: boolean;
 }
 
@@ -103,7 +69,6 @@ export interface Membership {
   price: number;
   duration: number; // in months
   features: string[];
-  branchId: string;
   isActive: boolean;
 }
 
@@ -111,7 +76,6 @@ export interface Booking {
   id: string;
   userId: string;
   serviceId: string;
-  branchId: string;
   staffId: string;
   date: Date;
   startTime: string;
@@ -124,11 +88,9 @@ export interface Booking {
 export interface Staff {
   id: string;
   userId: string;
-  branchId: string;
   position: string;
   salary: number;
   commission: number;
-  workingHours: WorkingHours;
   isActive: boolean;
 }
 
@@ -138,7 +100,6 @@ export interface Transaction {
   amount: number;
   description: string;
   category: string;
-  branchId: string;
   userId?: string;
   date: Date;
   paymentMethod: string;
@@ -148,7 +109,6 @@ export interface Transaction {
 export interface DashboardStats {
   totalSalons: number;
   totalGyms: number;
-  totalBranches: number;
   totalActiveMembers: number;
   totalStaff: number;
   todayRevenue: number;
@@ -195,14 +155,7 @@ export interface RegisterForm {
   confirmPassword: string;
 }
 
-export interface BranchForm {
-  name: string;
-  type: 'salon' | 'gym';
-  address: string;
-  phone: string;
-  email: string;
-  managerId?: string;
-}
+
 
 export interface ServiceForm {
   name: string;
@@ -231,7 +184,6 @@ export interface Invoice {
   invoiceNumber: string;
   transactionId: string;
   customerId: string;
-  branchId: string;
   items: any[];
   subtotal: number;
   tax: number;
@@ -277,18 +229,7 @@ export interface RevenueData {
   profit: number;
 }
 
-export interface BranchPerformance {
-  branchId: string;
-  branchName: string;
-  revenue: number;
-  bookings: number;
-  rating: number;
-  growth: number;
-  profit: number;
-  bookingCount: number;
-  expenses: number;
-  memberCount: number;
-}
+
 
 export type UserRole = 'admin' | 'manager' | 'staff' | 'customer';
 

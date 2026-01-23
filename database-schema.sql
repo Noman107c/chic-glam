@@ -110,6 +110,19 @@ CREATE TABLE salaries (
   UNIQUE(user_id, month, year)
 );
 
+-- Beautician sales table
+CREATE TABLE beautician_sales (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  beautician_id uuid REFERENCES users(id) ON DELETE CASCADE,
+  service_id uuid REFERENCES services(id) ON DELETE CASCADE,
+  customer_name text NOT NULL,
+  amount numeric NOT NULL,
+  commission numeric DEFAULT 0,
+  payment_method text,
+  transaction_date timestamp DEFAULT now(),
+  created_at timestamp DEFAULT now()
+);
+
 -- Insert default permissions
 INSERT INTO permissions (name) VALUES
   ('users.create'),
