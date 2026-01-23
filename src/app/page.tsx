@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Trash2, X, CreditCard, DollarSign, ShoppingCart, User, Phone, CheckCircle, LogIn } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
-import POSLayout from './components/POSLayout';
 
 // Mock data for products/services with images
 const mockProducts = [

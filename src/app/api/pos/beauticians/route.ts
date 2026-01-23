@@ -5,14 +5,41 @@ export async function GET(request: NextRequest) {
   try {
     const beauticians = await prisma.beautician.findMany({
       where: { isAvailable: true },
-      include: { user: true },
+      select: {
+        id: true,
+        userId: true,
+        specialization: true,
+        experience: true,
+        rating: true,
+        isAvailable: true,
+        hourlyRate: true,
+        totalEarnings: true,
+        servicesCount: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            avatar: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ data: beauticians });
+    return NextResponse.json({ 
+      success: true,
+      data: beauticians,
+      count: beauticians.length,
+    });
   } catch (error) {
     console.error('Error fetching beauticians:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch beauticians' },
+      { 
+        success: false,
+        error: 'Failed to fetch beauticians',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
