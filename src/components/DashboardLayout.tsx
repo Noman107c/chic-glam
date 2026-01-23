@@ -57,7 +57,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 p-6">
+        <main className="flex-1 overflow-auto bg-[#FAF9F6] p-6">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

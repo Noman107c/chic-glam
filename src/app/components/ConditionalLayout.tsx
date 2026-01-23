@@ -11,12 +11,13 @@ interface ConditionalLayoutProps {
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard');
+  const isAuthLogin = pathname === '/auth/login';
 
   return (
     <>
-      {!isDashboard && <Header />}
+      {!isDashboard && !isAuthLogin && <Header />}
       {children}
-      {!isDashboard && <Footer />}
+      {!isDashboard && !isAuthLogin && <Footer />}
     </>
   );
 }
