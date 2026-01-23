@@ -32,16 +32,16 @@ export const Topbar: React.FC<TopbarProps> = ({
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+    <header className="bg-white border-b border-gray-200  sticky top-0 z-30">
       <div className="flex items-center justify-between px-4 h-16 md:px-6">
         {/* Left Section */}
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-xl font-semibold text-gray-900">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 ">
                 {subtitle}
               </p>
             )}
@@ -61,19 +61,6 @@ export const Topbar: React.FC<TopbarProps> = ({
               />
             </div>
           </div>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme === 'light' ? (
-              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-            ) : (
-              <Sun className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-            )}
-          </button>
 
           {/* Notifications */}
           <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">

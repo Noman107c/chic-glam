@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -9,7 +9,8 @@ import { DataTable, Column } from '@/components/tables/DataTable';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { Transaction, TransactionType, Invoice } from '@/types';
-import { formatDate, formatCurrency } from '@/utils';
+import { formatDate } from '@/utils';
+import financeService from '@/services/finance.service';
 
 const MOCK_TRANSACTIONS: Transaction[] = [
   {
@@ -74,6 +75,33 @@ export default function FinancePage() {
   const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
   const [invoices, setInvoices] = useState(MOCK_INVOICES);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadFinanceData();
+  }, []);
+
+  const loadFinanceData = async () => {
+    try {
+      setLoading(true);
+
+      // Load transactions
+      const transactionsResponse = await financeService.getTransactions();
+      if (transactionsResponse.success && transactionsResponse.data) {
+        setTransactions(transactionsResponse.data.data);
+      }
+
+      // Load invoices
+      const invoicesResponse = await financeService.getInvoices();
+      if (invoicesResponse.success && invoicesResponse.data) {
+        setInvoices(invoicesResponse.data.data);
+      }
+    } catch (error) {
+      console.error('Error loading finance data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const totalIncome = transactions
     .filter(t => t.type === 'income')
@@ -106,7 +134,7 @@ export default function FinancePage() {
       label: 'Amount',
       render: (value: number, row: Transaction) => (
         <span className={row.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-          {row.type === 'income' ? '+' : '-'}{formatCurrency(value)}
+          {row.type === 'income' ? '+' : '-'}{ (value)}
         </span>
       ),
     },
@@ -125,7 +153,7 @@ export default function FinancePage() {
     {
       key: 'total',
       label: 'Amount',
-      render: (value: number) => formatCurrency(value),
+      render: (value: number) =>  (value),
     },
     {
       key: 'paymentStatus',
@@ -161,7 +189,7 @@ export default function FinancePage() {
               Total Income
             </p>
             <p className="text-3xl font-bold text-green-600">
-              {formatCurrency(totalIncome)}
+              { (totalIncome)}
             </p>
           </CardBody>
         </Card>
@@ -171,7 +199,7 @@ export default function FinancePage() {
               Total Expense
             </p>
             <p className="text-3xl font-bold text-red-600">
-              {formatCurrency(totalExpense)}
+              { (totalExpense)}
             </p>
           </CardBody>
         </Card>
@@ -181,7 +209,7 @@ export default function FinancePage() {
               Net Profit
             </p>
             <p className={`text-3xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-              {formatCurrency(netProfit)}
+              { (netProfit)}
             </p>
           </CardBody>
         </Card>
@@ -232,7 +260,7 @@ export default function FinancePage() {
                       }`}
                     >
                       {transaction.type === 'income' ? '+' : '-'}
-                      {formatCurrency(transaction.amount)}
+                      { (transaction.amount)}
                     </span>
                   </div>
                 ))}
@@ -260,7 +288,7 @@ export default function FinancePage() {
                         </p>
                       </div>
                       <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                        {formatCurrency(invoice.total)}
+                        { (invoice.total)}
                       </span>
                     </div>
                   ))}

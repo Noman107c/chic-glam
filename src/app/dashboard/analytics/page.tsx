@@ -146,13 +146,13 @@ export default function AnalyticsPage() {
                         {branch.branchName}
                       </td>
                       <td className="px-4 py-3 text-right text-gray-900">
-                        ${branch.revenue.toLocaleString()}
+                        { (branch.revenue)}
                       </td>
                       <td className="px-4 py-3 text-right text-gray-900">
-                        ${branch.expenses.toLocaleString()}
+                        { (branch.expenses)}
                       </td>
                       <td className="px-4 py-3 text-right font-semibold text-green-600">
-                        ${branch.profit.toLocaleString()}
+                        { (branch.profit)}
                       </td>
                       <td className="px-4 py-3 text-right text-gray-900">
                         {margin}%
@@ -187,7 +187,7 @@ export default function AnalyticsPage() {
                 <div key={index} className="flex justify-between items-center">
                   <span className="text-gray-700">{service.name}</span>
                   <span className="font-semibold text-gray-900">
-                    ${service.revenue.toLocaleString()}
+                    { (service.revenue)}
                   </span>
                 </div>
               ))}

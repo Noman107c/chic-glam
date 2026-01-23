@@ -1,9 +1,10 @@
-# Dashboard Layout Fix TODO
+# TODO: Transform Main Page to POS Page
 
-- [x] Import Topbar component in layout.tsx
-- [x] Replace current top bar with Topbar component
-- [x] Pass sidebar toggle function to Topbar's onMenuClick
-- [x] Adjust layout structure for sticky Topbar
-- [x] Add handleLogout prop to Topbar component
-- [x] Pass handleLogout to Topbar in layout.tsx
-- [x] Verify layout works without glitches
+## Tasks
+- [ ] Replace src/app/page.tsx with POS page content from src/app/pos/page.tsx
+- [ ] Add category filters to the left panel (sidebar) for services and products
+- [ ] Ensure center panel displays selected package (cart items)
+- [ ] Test the page functionality
+
+## Progress
+- [x] Plan confirmed by user

@@ -138,7 +138,7 @@ export default function DashboardPage() {
         <StatCard
           icon={<DollarSign />}
           title="Total Revenue"
-          value={`Rs. ${stats.totalRevenue.toLocaleString()}`}
+          value={(stats.totalRevenue)}
           color="orange"
         />
       </div>
@@ -176,7 +176,7 @@ export default function DashboardPage() {
           <CardBody>
             <div className="text-center">
               <div className="text-3xl font-bold text-orange-600 mb-2">
-                Rs. {stats.todayRevenue.toLocaleString()}
+                {(stats.todayRevenue)}
               </div>
               <p className="text-gray-600">Revenue earned</p>
             </div>
@@ -242,7 +242,7 @@ export default function DashboardPage() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Monthly Revenue:</span>
                   <span className="font-medium">
-                    Rs. {stats.monthlyRevenue.toLocaleString()}
+                    {(stats.monthlyRevenue)}
                   </span>
                 </div>
                 <div className="flex justify-between">

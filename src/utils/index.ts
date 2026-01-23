@@ -1,15 +1,8 @@
 // Utility functions for the dashboard
 
 // Format currency
-export const formatCurrency = (amount: number, currency = 'PKR'): string => {
-  if (currency === 'PKR') {
-    return `PKR ${amount.toLocaleString('en-PK', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-  }
-  return new Intl.NumberFormat('en-PK', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-  }).format(amount);
+export const formatCurrency = (amount: number): string => {
+  return `PKR ${amount.toLocaleString('en-PK', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 };
 
 // Format date
