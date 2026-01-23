@@ -16,45 +16,54 @@ import {
   UserCheck,
   Scissors,
   Clock,
+  X,
+  Menu,
+  LogOut,
 } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  widthClass?: string;
+  handleLogout: () => void;
 }
 
 const MENU_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { label: 'Appointments', href: '/dashboard/appointments', icon: Calendar },
-  { label: 'Services', href: '/dashboard/services', icon: Scissors },
+  { label: 'Branches', href: '/dashboard/branches', icon: Building },
   { label: 'Attendance', href: '/dashboard/attendance', icon: Clock },
   { label: 'Finance', href: '/dashboard/finance', icon: DollarSign },
   { label: 'User Management', href: '/dashboard/roles', icon: Users },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, widthClass, handleLogout }) => {
   const pathname = usePathname();
 
   return (
     <aside
       className={`
-        fixed left-0 top-0 z-40 h-screen w-64 transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:relative md:translate-x-0 md:z-auto
+        ${isOpen ? 'w-64' : 'w-20'} bg-white text-[#392d22] transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-100
       `}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-            <Scissors className="h-5 w-5 text-white" />
+      <div className="flex h-16 items-center justify-center border-b border-gray-100 px-4">
+        <Link href="/dashboard" className="flex items-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg">
+            <img
+              src="/chic.png"
+              alt="Chic Glam Logo"
+              className="h-18 w-18 object-contain"
+            />
           </div>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
-            Chic Glam
-          </span>
         </Link>
+        <button
+          onClick={onToggle}
+          className="p-2 hover:bg-gray-50 rounded-lg transition-colors ml-auto"
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
 
       {/* Navigation */}
@@ -71,13 +80,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   className={`
                     flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors
                     ${isActive
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      ? 'bg-[#FAF9F6] text-[#392d22]'
+                      : 'text-gray-600 hover:bg-[#FAF9F6] hover:text-[#392d22]'
                     }
                   `}
                 >
                   <Icon className="h-5 w-5" />
-                  {item.label}
+                  {isOpen && item.label}
                 </Link>
               </li>
             );
@@ -86,10 +95,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          © 2024 Chic Glam
-        </div>
+      <div className="p-4 border-t border-gray-100 space-y-2">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 hover:text-red-700 font-light"
+          title={!isOpen ? 'Logout' : ''}
+        >
+          <LogOut size={20} />
+          {isOpen && <span className="text-sm font-medium">Logout</span>}
+        </button>
       </div>
     </aside>
   );

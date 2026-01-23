@@ -25,12 +25,12 @@ const colorClasses = {
 };
 
 const iconColorClasses = {
-  blue: 'text-blue-600',
-  purple: 'text-purple-600',
-  green: 'text-green-600',
-  orange: 'text-orange-600',
-  red: 'text-red-600',
-  cyan: 'text-cyan-600',
+  blue: 'text-[#392d22]',
+  purple: 'text-[#392d22]',
+  green: 'text-[#392d22]',
+  orange: 'text-[#392d22]',
+  red: 'text-[#392d22]',
+  cyan: 'text-[#392d22]',
 };
 
 export const StatCard: React.FC<StatCardProps> = ({

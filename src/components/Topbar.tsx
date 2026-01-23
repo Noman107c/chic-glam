@@ -9,19 +9,26 @@ interface TopbarProps {
   onMenuClick: () => void;
   title?: string;
   subtitle?: string;
+  handleLogout?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
   onMenuClick,
   title = "Dashboard",
-  subtitle
+  subtitle,
+  handleLogout,
+  isSidebarOpen = true
 }) => {
   const { theme, toggleTheme } = useTheme();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    console.log('Logout clicked');
+  const onLogout = () => {
+    if (handleLogout) {
+      handleLogout();
+    } else {
+      console.log('Logout clicked');
+    }
   };
 
   return (
@@ -29,13 +36,6 @@ export const Topbar: React.FC<TopbarProps> = ({
       <div className="flex items-center justify-between px-4 h-16 md:px-6">
         {/* Left Section */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={onMenuClick}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors md:hidden"
-          >
-            <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-          </button>
-
           <div className="hidden md:block">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
               {title}
@@ -57,7 +57,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="pl-10 pr-4 py-2 w-64 bg-[#FAF9F6] border border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#392d22] focus:border-transparent"
               />
             </div>
           </div>
@@ -89,7 +89,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               onClick={() => setShowProfileMenu(!showProfileMenu)}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#392d22] to-gray-600 flex items-center justify-center">
                 <User className="h-4 w-4 text-white" />
               </div>
               <div className="hidden md:block text-left">
@@ -123,7 +123,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                     Settings
                   </button>
                   <button
-                    onClick={handleLogout}
+                    onClick={onLogout}
                     className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     <LogOut className="h-4 w-4" />
