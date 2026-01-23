@@ -1,0 +1,6 @@
+import React from 'react';
+import { POS } from '@/components/POS';
+
+export default function POSPage() {
+  return <POS />;
+}

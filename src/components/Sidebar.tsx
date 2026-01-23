@@ -19,6 +19,7 @@ import {
   X,
   Menu,
   LogOut,
+  ShoppingCart,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -34,6 +35,7 @@ const MENU_ITEMS = [
   { label: 'Branches', href: '/dashboard/branches', icon: Building },
   { label: 'Attendance', href: '/dashboard/attendance', icon: Clock },
   { label: 'Finance', href: '/dashboard/finance', icon: DollarSign },
+  { label: 'POS', href: '/dashboard/pos', icon: ShoppingCart },
   { label: 'User Management', href: '/dashboard/roles', icon: Users },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
@@ -45,6 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, widthClass, 
     <aside
       className={`
         ${isOpen ? 'w-64' : 'w-20'} bg-white text-[#392d22] transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-100
+        relative z-40 h-full
       `}
     >
       {/* Logo */}

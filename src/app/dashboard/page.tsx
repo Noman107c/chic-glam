@@ -89,9 +89,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">
             Welcome back, {user?.name}!
           </h1>
           <p className="text-gray-700">
@@ -100,14 +100,14 @@ export default function DashboardPage() {
              'Trainer Dashboard'}
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 w-full md:w-auto">
           {!todayAttendance || todayAttendance.check_out_time ? (
-            <Button variant="primary" onClick={handleCheckIn}>
+            <Button variant="primary" className="flex-1 md:flex-none">
               <Calendar className="w-4 h-4 mr-2" />
               Check In
             </Button>
           ) : (
-            <Button variant="success" onClick={handleCheckOut}>
+            <Button variant="success" className="flex-1 md:flex-none">
               <UserCheck className="w-4 h-4 mr-2" />
               Check Out
             </Button>

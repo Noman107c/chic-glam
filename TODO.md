@@ -1,9 +1,10 @@
-# Dashboard Layout Fix TODO
+# TODO: Implement Sidebar with Categories Dropdown in POS
 
-- [x] Import Topbar component in layout.tsx
-- [x] Replace current top bar with Topbar component
-- [x] Pass sidebar toggle function to Topbar's onMenuClick
-- [x] Adjust layout structure for sticky Topbar
-- [x] Add handleLogout prop to Topbar component
-- [x] Pass handleLogout to Topbar in layout.tsx
-- [x] Verify layout works without glitches
+## Tasks
+- [ ] Add state variables for selectedType, selectedCategory, and selectedService in POS component
+- [ ] Group services by type (Gym/Beauty) and categories
+- [ ] Add sidebar component within POS layout with main filter for Gym/Beauty
+- [ ] Render categories below the filter, each with expandable dropdown showing services
+- [ ] Update service selection logic to use sidebar selection
+- [ ] Adjust POS layout to accommodate the sidebar (e.g., grid-cols-1 lg:grid-cols-3)
+- [x] Test the functionality and ensure integration with cart and payment
