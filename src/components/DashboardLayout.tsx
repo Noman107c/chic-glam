@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '../components/Sidebar';
 import { Topbar } from '../components/Topbar';
+import { supabaseClient } from '@/lib/supabaseClient';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -16,6 +18,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   subtitle
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   // Handle responsive sidebar behavior
   useEffect(() => {
@@ -34,10 +37,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  const handleLogout = async () => {
+    await supabaseClient.auth.signOut();
+    router.push('/auth/login');
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} handleLogout={handleLogout} />
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
