@@ -31,9 +31,9 @@ interface SidebarProps {
 const MENU_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { label: 'Branches', href: '/dashboard/branches', icon: Building },
   { label: 'Attendance', href: '/dashboard/attendance', icon: Clock },
   { label: 'Finance', href: '/dashboard/finance', icon: DollarSign },
+  { label: 'Users', href: '/dashboard/users', icon: Users },
   { label: 'User Management', href: '/dashboard/roles', icon: Users },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];

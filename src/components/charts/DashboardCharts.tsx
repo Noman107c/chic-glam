@@ -89,16 +89,18 @@ interface ComparisonChartProps {
   data: Array<{
     name: string;
     salonRevenue: number;
-    gymRevenue: number;
+    gymRevenue?: number;
   }>;
 }
 
 export const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
+  const hasGymData = data.some(item => item.gymRevenue !== undefined);
+
   return (
     <Card>
       <CardHeader
-        title="Salon vs Gym Performance"
-        subtitle="Monthly comparison"
+        title={hasGymData ? "Salon vs Gym Performance" : "Monthly Revenue"}
+        subtitle={hasGymData ? "Monthly comparison" : "Revenue performance"}
       />
       <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
@@ -109,7 +111,7 @@ export const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
             <Tooltip />
             <Legend />
             <Bar dataKey="salonRevenue" fill={CHART_COLORS[1]} name="Salon" />
-            <Bar dataKey="gymRevenue" fill={CHART_COLORS[3]} name="Gym" />
+            {hasGymData && <Bar dataKey="gymRevenue" fill={CHART_COLORS[3]} name="Gym" />}
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -21,20 +21,23 @@ export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const [dateRange, setDateRange] = useState('weekly');
 
-  const branchRevenueData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.revenue,
-  }));
+  const serviceRevenueData = [
+    { name: 'Hair Styling', value: 24500 },
+    { name: 'Personal Training', value: 22300 },
+    { name: 'Facial Treatment', value: 18900 },
+    { name: 'Membership Plans', value: 15600 },
+    { name: 'Manicure', value: 12800 },
+    { name: 'Massage', value: 11200 },
+  ];
 
-  const branchProfitData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.profit,
-  }));
-
-  const bookingCountData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.bookingCount,
-  }));
+  const serviceBookingData = [
+    { name: 'Hair Styling', value: 245 },
+    { name: 'Personal Training', value: 189 },
+    { name: 'Facial Treatment', value: 156 },
+    { name: 'Membership Plans', value: 134 },
+    { name: 'Manicure', value: 98 },
+    { name: 'Massage', value: 87 },
+  ];
 
   return (
     <div className="space-y-8">
@@ -89,14 +92,14 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <MembershipGrowthChart data={mockMembershipData} />
         <CustomPieChart
-          data={branchRevenueData}
+          data={serviceRevenueData}
           title="Revenue Distribution"
-          subtitle="By branch"
+          subtitle="By service"
         />
         <CustomPieChart
-          data={bookingCountData}
+          data={serviceBookingData}
           title="Booking Distribution"
-          subtitle="By branch"
+          subtitle="By service"
         />
       </div>
 

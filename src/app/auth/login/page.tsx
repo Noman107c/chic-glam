@@ -77,7 +77,7 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(57, 45, 34, 0.1)', borderColor: 'var(--primary-color)', color: 'var(--foreground)' }}>
-          <p className="text-sm">
+          <p className="text-sm text-black">
             <strong>Demo Credentials:</strong><br />
             Email: noman@gmail.com<br />
             Password: 123

@@ -14,15 +14,15 @@ import { Users, DollarSign, Calendar, TrendingUp, Activity, Settings, UserCheck,
 export default function DashboardPage() {
   const { user, role, isSuperAdmin } = useAuth();
   const [stats, setStats] = useState({
-    totalUsers: 0,
-    activeUsers: 0,
-    totalAttendance: 0,
-    totalSales: 0,
-    totalRevenue: 0,
-    todayAttendance: 0,
-    todaySales: 0,
-    todayRevenue: 0,
-    monthlyRevenue: 0
+    totalUsers: 1247,
+    activeUsers: 892,
+    totalAttendance: 15680,
+    totalSales: 2341,
+    totalRevenue: 2847500,
+    todayAttendance: 45,
+    todaySales: 23,
+    todayRevenue: 45600,
+    monthlyRevenue: 892500
   });
   const [loading, setLoading] = useState(true);
   const [todayAttendance, setTodayAttendance] = useState<any>(null);
@@ -36,17 +36,17 @@ export default function DashboardPage() {
     try {
       if (!user) return;
 
-      const dashboardStats = await dashboardService.getDashboardStats(
-        isSuperAdmin ? undefined : user.id
-      );
-      setStats(dashboardStats);
+      // Using mock data for demonstration
+      // const dashboardStats = await dashboardService.getDashboardStats(
+      //   isSuperAdmin ? undefined : user.id
+      // );
+      // setStats(dashboardStats);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
-
   const loadTodayAttendance = async () => {
     try {
       if (!user) return;
@@ -100,19 +100,7 @@ export default function DashboardPage() {
              'Trainer Dashboard'}
           </p>
         </div>
-        <div className="flex gap-4">
-          {!todayAttendance || todayAttendance.check_out_time ? (
-            <Button variant="primary" onClick={handleCheckIn}>
-              <Calendar className="w-4 h-4 mr-2" />
-              Check In
-            </Button>
-          ) : (
-            <Button variant="success" onClick={handleCheckOut}>
-              <UserCheck className="w-4 h-4 mr-2" />
-              Check Out
-            </Button>
-          )}
-        </div>
+        
       </div>
 
       {/* Stats Cards */}
@@ -196,10 +184,10 @@ export default function DashboardPage() {
         />
         <ComparisonChart
           data={[
-            { name: 'Jan', salonRevenue: 30000, gymRevenue: 25000 },
-            { name: 'Feb', salonRevenue: 35000, gymRevenue: 28000 },
-            { name: 'Mar', salonRevenue: 32000, gymRevenue: 27000 },
-            { name: 'Apr', salonRevenue: 38000, gymRevenue: 30000 },
+            { name: 'Jan', salonRevenue: 30000 },
+            { name: 'Feb', salonRevenue: 35000 },
+            { name: 'Mar', salonRevenue: 32000 },
+            { name: 'Apr', salonRevenue: 38000 },
           ]}
         />
       </div>

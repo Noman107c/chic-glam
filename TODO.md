@@ -1,10 +1,7 @@
-# TODO: Transform Main Page to POS Page
+# TODO: Add Pakistani Names to Roles Mock Data
 
 ## Tasks
-- [ ] Replace src/app/page.tsx with POS page content from src/app/pos/page.tsx
-- [ ] Add category filters to the left panel (sidebar) for services and products
-- [ ] Ensure center panel displays selected package (cart items)
-- [ ] Test the page functionality
-
-## Progress
-- [x] Plan confirmed by user
+- [x] Update existing role names in mockRoles to Urdu equivalents
+- [x] Add descriptions in Urdu for existing roles
+- [x] Add 3 new roles with Pakistani names and descriptions
+- [x] Verify the changes in src/utils/mockData.ts

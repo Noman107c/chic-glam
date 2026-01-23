@@ -10,6 +10,7 @@ import { DataTable, Column } from '@/components/tables/DataTable';
 import { Badge } from '@/components/ui/Badge';
 import { Toast } from '@/components/ui/Toast';
 import { Role, Permission, PERMISSION_LIST } from '@/types';
+import { mockRoles } from '@/utils/mockData';
 
 interface RoleForm {
   name: string;
@@ -38,10 +39,8 @@ export default function RolesPage() {
   const fetchRoles = async () => {
     try {
       setPageLoading(true);
-      const response = await fetch('/api/roles');
-      if (!response.ok) throw new Error('Failed to fetch roles');
-      const data = await response.json();
-      setRoles(data.data || []);
+      // Use mock data instead of API call
+      setRoles(mockRoles);
     } catch (error) {
       console.error('Error fetching roles:', error);
       setToast({ message: 'Failed to load roles', type: 'error' });
@@ -100,7 +99,7 @@ export default function RolesPage() {
   };
 
   const handleSaveRole = async () => {
-    if (!form.name || form.permissions.length === 0) {
+    if (!form.name) {
       setToast({ message: 'Please fill in all required fields', type: 'error' });
       return;
     }
@@ -202,7 +201,7 @@ export default function RolesPage() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Roles & Permissions
+                Roles
               </h1>
               <p className="text-gray-700">Manage system roles and permissions</p>
             </div>
@@ -249,7 +248,7 @@ export default function RolesPage() {
                 <Button
                   variant="primary"
                   onClick={handleSaveRole}
-                  disabled={!form.name || form.permissions.length === 0 || loading}
+                  disabled={!form.name || loading}
                 >
                   {loading ? '...' : selectedRole ? 'Update Role' : 'Create Role'}
                 </Button>
@@ -263,32 +262,6 @@ export default function RolesPage() {
                 onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Gym Manager"
               />
-
-              <Input
-                label="Description"
-                value={form.description}
-                onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Describe the role's purpose"
-              />
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Permissions ({form.permissions.length} selected)
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  {PERMISSION_LIST.map(permission => (
-                    <label key={permission.id} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.permissions.includes(permission.name)}
-                        onChange={() => handlePermissionToggle(permission.name)}
-                        className="w-4 h-4"
-                      />
-                      <span className="text-sm text-gray-700">{permission.name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
             </div>
           </Modal>
         </>

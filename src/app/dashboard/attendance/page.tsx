@@ -9,6 +9,7 @@ import { Select } from '@/components/ui/Select';
 import { DataTable } from '@/components/tables/DataTable';
 import { staffService } from '@/services/staff.service';
 import { userService } from '@/services/user.service';
+import { mockAttendanceRecords, mockUsers } from '@/utils/mockData';
 import { Calendar, Clock, UserCheck, Search, Filter } from 'lucide-react';
 
 interface AttendanceRecord {
@@ -55,8 +56,8 @@ export default function AttendancePage() {
       );
       setUsers(staffUsers);
 
-      // Load all attendance records
-      const attendanceData = await loadAllAttendanceRecords();
+      // Load all attendance records from mock data
+      const attendanceData = mockAttendanceRecords;
       setAttendanceRecords(attendanceData);
 
       // Calculate stats
@@ -69,36 +70,7 @@ export default function AttendancePage() {
     }
   };
 
-  const loadAllAttendanceRecords = async () => {
-    try {
-      // Get all staff attendance records
-      const response = await fetch('/api/staff/attendance?limit=1000');
-      const data = await response.json();
 
-      if (data.success && data.data) {
-        // Enrich with user data
-        const enrichedRecords = await Promise.all(
-          data.data.map(async (record: AttendanceRecord) => {
-            try {
-              const userResponse = await fetch(`/api/users/${record.user_id}`);
-              const userData = await userResponse.json();
-              return {
-                ...record,
-                user: userData.success ? userData.data : null,
-              };
-            } catch (error) {
-              return record;
-            }
-          })
-        );
-        return enrichedRecords;
-      }
-      return [];
-    } catch (error) {
-      console.error('Error loading attendance records:', error);
-      return [];
-    }
-  };
 
   const calculateStats = (records: AttendanceRecord[]) => {
     const today = new Date().toISOString().split('T')[0];
