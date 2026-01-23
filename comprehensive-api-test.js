@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const API_ENDPOINTS = require('./api-endpoints');
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 
 // Test data
 const testCredentials = {
