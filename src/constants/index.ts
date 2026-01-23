@@ -20,40 +20,28 @@ export const ROLE_PERMISSIONS = {
   [ROLES.SUPER_ADMIN]: [
     'users.create', 'users.read', 'users.update', 'users.delete',
     'roles.create', 'roles.read', 'roles.update', 'roles.delete',
-    'branches.create', 'branches.read', 'branches.update', 'branches.delete',
     'finance.read', 'finance.create', 'finance.update', 'finance.delete',
     'reports.read', 'reports.export',
     'settings.update', 'settings.read',
   ],
-  [ROLES.BRANCH_ADMIN]: [
-    'users.read', 'users.update',
-    'branches.read', 'branches.update',
-    'finance.read', 'finance.create',
-    'reports.read',
-  ],
   [ROLES.SALON_MANAGER]: [
     'users.read',
-    'branches.read',
     'finance.read',
     'reports.read',
   ],
   [ROLES.GYM_MANAGER]: [
     'users.read',
-    'branches.read',
     'finance.read',
     'reports.read',
   ],
   [ROLES.TRAINER]: [
     'users.read',
-    'branches.read',
   ],
   [ROLES.BEAUTICIAN]: [
     'users.read',
-    'branches.read',
   ],
   [ROLES.RECEPTIONIST]: [
     'users.read',
-    'branches.read',
     'finance.read',
   ],
   [ROLES.ACCOUNTANT]: [

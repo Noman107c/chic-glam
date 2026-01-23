@@ -14,27 +14,13 @@ import {
   mockRevenueData,
   mockComparisonData,
   mockMembershipData,
-  mockBranchPerformance,
 } from '@/utils/mockData';
 
 export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const [dateRange, setDateRange] = useState('weekly');
 
-  const branchRevenueData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.revenue,
-  }));
 
-  const branchProfitData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.profit,
-  }));
-
-  const bookingCountData = mockBranchPerformance.map(branch => ({
-    name: branch.branchName,
-    value: branch.bookingCount,
-  }));
 
   return (
     <div className="space-y-8">
@@ -86,91 +72,11 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Secondary Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
         <MembershipGrowthChart data={mockMembershipData} />
-        <CustomPieChart
-          data={branchRevenueData}
-          title="Revenue Distribution"
-          subtitle="By branch"
-        />
-        <CustomPieChart
-          data={bookingCountData}
-          title="Booking Distribution"
-          subtitle="By branch"
-        />
       </div>
 
-      {/* Performance Table */}
-      <Card>
-        <CardHeader
-          title="Branch Performance Summary"
-          subtitle="Detailed metrics for each branch"
-        />
-        <CardBody>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b-2 border-gray-200">
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                    Branch Name
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Revenue
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Expenses
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Profit
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Margin %
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Members
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">
-                    Bookings
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockBranchPerformance.map(branch => {
-                  const margin = ((branch.profit / branch.revenue) * 100).toFixed(1);
-                  return (
-                    <tr
-                      key={branch.branchId}
-                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-4 py-3 font-medium text-gray-900">
-                        {branch.branchName}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-900">
-                        ${branch.revenue.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-900">
-                        ${branch.expenses.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right font-semibold text-green-600">
-                        ${branch.profit.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-900">
-                        {margin}%
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-900">
-                        {branch.memberCount}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-900">
-                        {branch.bookingCount}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </CardBody>
-      </Card>
+
 
       {/* Key Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

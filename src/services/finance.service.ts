@@ -2,7 +2,6 @@ import { ApiResponse, PaginatedResponse, Transaction, Invoice, Expense, Salary }
 
 class FinanceService {
   async getTransactions(
-    branchId?: string,
     page: number = 1,
     limit: number = 10
   ): Promise<ApiResponse<PaginatedResponse<Transaction>>> {
@@ -10,7 +9,6 @@ class FinanceService {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit),
-        ...(branchId && { branchId }),
       });
 
       const response = await fetch(`/api/finance/transactions?${params}`);
@@ -61,7 +59,6 @@ class FinanceService {
   }
 
   async getExpenses(
-    branchId?: string,
     page: number = 1,
     limit: number = 10
   ): Promise<ApiResponse<PaginatedResponse<Expense>>> {
@@ -69,7 +66,6 @@ class FinanceService {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit),
-        ...(branchId && { branchId }),
       });
 
       const response = await fetch(`/api/finance/expenses?${params}`);
@@ -104,7 +100,6 @@ class FinanceService {
   }
 
   async getSalaries(
-    branchId?: string,
     page: number = 1,
     limit: number = 10
   ): Promise<ApiResponse<PaginatedResponse<Salary>>> {
@@ -112,7 +107,6 @@ class FinanceService {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit),
-        ...(branchId && { branchId }),
       });
 
       const response = await fetch(`/api/finance/salaries?${params}`);
