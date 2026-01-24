@@ -36,8 +36,8 @@ const MENU_ITEMS = [
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { label: "Attendance", href: "/dashboard/attendance", icon: Clock },
   { label: "Finance", href: "/dashboard/finance", icon: DollarSign },
-  { label: "Users", href: "/dashboard/users", icon: Users },
-  { label: "User Management", href: "/dashboard/roles", icon: Users },
+  { label: "User Management", href: "/dashboard/users", icon: Users },
+  { label: "User Roles", href: "/dashboard/roles", icon: Lock },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
