@@ -26,7 +26,7 @@ interface Product {
   status: "in-stock" | "low-stock" | "out-of-stock";
 }
 
-interface InventoryTransaction {
+interface StockTransaction {
   id: string;
   productName: string;
   type: "ADD" | "USE" | "RETURN";
@@ -68,7 +68,7 @@ const mockProducts: Product[] = [
   },
 ];
 
-const mockTransactions: InventoryTransaction[] = [
+const mockTransactions: StockTransaction[] = [
   {
     id: "1",
     productName: "Facial Cleanser",
@@ -87,13 +87,11 @@ const mockTransactions: InventoryTransaction[] = [
   },
 ];
 
-export default function InventoryPage() {
+export default function SalonSuppliesPage() {
   const [products, setProducts] = useState<Product[]>(mockProducts);
   const [transactions, setTransactions] =
-    useState<InventoryTransaction[]>(mockTransactions);
-  const [activeTab, setActiveTab] = useState<"inventory" | "transactions">(
-    "inventory",
-  );
+    useState<StockTransaction[]>(mockTransactions);
+  const [activeTab, setActiveTab] = useState<"stock" | "history">("stock");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({});
@@ -168,8 +166,8 @@ export default function InventoryPage() {
     }
   };
 
-  // Inventory Tab
-  const InventoryTab = () => (
+  // Stock Tab
+  const StockTab = () => (
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -425,13 +423,13 @@ export default function InventoryPage() {
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
               <span>Dashboard</span>
               <span>/</span>
-              <span className="text-gray-900 font-medium">Inventory</span>
+              <span className="text-gray-900 font-medium">Salon Supplies</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              Inventory Management
+              Salon Supplies
             </h1>
             <p className="text-sm text-gray-600">
-              Track products, stock levels, and inventory transactions
+              Track products, stock levels, and usage history.
             </p>
           </div>
         </div>
@@ -439,24 +437,29 @@ export default function InventoryPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 sm:gap-4 border-b-2 border-gray-200 overflow-x-auto">
-        {(["inventory", "transactions"] as const).map((tab) => (
+        {(
+          [
+            ["stock", "Current Stock"],
+            ["history", "Usage History"],
+          ] as const
+        ).map(([id, label]) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 sm:px-6 py-3 font-semibold capitalize border-b-2 transition whitespace-nowrap ${
-              activeTab === tab
+            key={id}
+            onClick={() => setActiveTab(id as "stock" | "history")}
+            className={`px-4 sm:px-6 py-3 font-semibold border-b-2 transition whitespace-nowrap ${
+              activeTab === id
                 ? "border-[#392d22] text-[#392d22]"
                 : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
             }`}
           >
-            {tab}
+            {label}
           </button>
         ))}
       </div>
 
       {/* Tab Content */}
-      {activeTab === "inventory" && <InventoryTab />}
-      {activeTab === "transactions" && <TransactionsTab />}
+      {activeTab === "stock" && <StockTab />}
+      {activeTab === "history" && <TransactionsTab />}
 
       {/* Product Modal */}
       <Modal
