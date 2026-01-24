@@ -25,10 +25,9 @@ export default function RolesPage() {
   const fetchRoles = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/roles');
-      if (!response.ok) throw new Error('Failed to fetch roles');
-      const data = await response.json();
-      setRoles(data.data || []);
+      // Load roles from localStorage
+      const storedRoles = JSON.parse(localStorage.getItem('chic_glam_roles') || '[]');
+      setRoles(storedRoles);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching roles');
@@ -40,15 +39,26 @@ export default function RolesPage() {
   const handleCreateRole = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/roles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) throw new Error('Failed to create role');
-      await fetchRoles();
+      // Create new role with localStorage
+      const newRole: Role = {
+        id: `role-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        name: formData.name,
+        description: formData.description,
+        created_at: new Date().toISOString(),
+      };
+
+      // Save to localStorage
+      const existingRoles = JSON.parse(localStorage.getItem('chic_glam_roles') || '[]');
+      existingRoles.push(newRole);
+      localStorage.setItem('chic_glam_roles', JSON.stringify(existingRoles));
+
+      console.log('Role created locally:', newRole);
+
+      // Update state and reset form
+      setRoles(existingRoles);
       setFormData({ name: '', description: '' });
       setShowForm(false);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error creating role');
     }

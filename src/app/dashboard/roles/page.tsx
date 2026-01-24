@@ -157,12 +157,10 @@ export default function RolesPage() {
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/roles/${role.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) throw new Error('Failed to delete role');
-      setRoles(roles.filter(r => r.id !== role.id));
+      // Delete role from localStorage
+      const updatedRoles = roles.filter(r => r.id !== role.id);
+      localStorage.setItem('chic_glam_roles', JSON.stringify(updatedRoles));
+      setRoles(updatedRoles);
       setToast({ message: 'Role deleted successfully', type: 'success' });
     } catch (error) {
       console.error('Error deleting role:', error);

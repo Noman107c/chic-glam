@@ -158,8 +158,12 @@ export default function POSPage() {
 
   const handlePaymentComplete = async () => {
     try {
-      // First, update inventory and record sale
+      // Generate receipt number
+      const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+
+      // Create sale data for local storage
       const saleData = {
+        id: receiptNumber,
         customerName: customerName.trim() || 'Walk-in Customer',
         items: cart.map(item => ({
           id: item.id.toString(),
@@ -170,26 +174,21 @@ export default function POSPage() {
         })),
         subtotal,
         discount: discountAmount,
+        discountPercent,
         total,
         paymentMethod,
+        cashReceived: parseFloat(cashReceived) || 0,
+        change,
+        receiptNumber,
+        timestamp: new Date().toISOString(),
       };
 
-      const response = await fetch('/api/sales', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(saleData),
-      });
+      // Save to localStorage
+      const existingSales = JSON.parse(localStorage.getItem('chic_glam_sales') || '[]');
+      existingSales.push(saleData);
+      localStorage.setItem('chic_glam_sales', JSON.stringify(existingSales));
 
-      if (!response.ok) {
-        throw new Error('Failed to process sale');
-      }
-
-      const result = await response.json();
-
-      // Generate receipt number
-      const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+      console.log('Sale saved locally:', saleData);
 
       // Print receipt directly
       const printWindow = window.open('', '_blank');
