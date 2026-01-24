@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Trash2, X, CreditCard, DollarSign, ShoppingCart, User, Phone, CheckCircle, LogIn, Printer } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Receipt } from '@/components/Receipt';
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 
 // Mock data for products/services with images
 const mockProducts = [
@@ -256,13 +255,12 @@ export default function POSPage() {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
-      {/* DESKTOP PANEL LAYOUT */}
-      <div className="hidden lg:block lg:flex-1">
-        <div className="flex h-full">
-          {/* LEFT PANEL - CATEGORIES */}
-          <div className="w-1/4 bg-white border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
-            {/* Header */}
-            <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018]">
+      {/* RESPONSIVE PANEL LAYOUT */}
+      <div className="flex flex-col lg:flex-row flex-1">
+        {/* LEFT PANEL - CATEGORIES */}
+        <div className="w-full lg:w-1/4 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
+          {/* Header */}
+          <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018] min-h-[64px] flex items-center">
               <h1 className="text-xl font-serif text-white">Chic & Glam</h1>
               <p className="text-xs text-gray-300 uppercase tracking-wider">POS System</p>
             </div>
@@ -462,155 +460,143 @@ export default function POSPage() {
           </div>
 
           {/* RIGHT PANEL - CART */}
-          <div className="w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm fixed lg:static bottom-0 left-0 right-0 lg:bottom-auto z-40 transition-all duration-300 max-h-96 lg:max-h-none overflow-hidden lg:overflow-visible"
-            style={{ height: cart.length > 0 ? 'auto' : '0px', maxHeight: cart.length > 0 ? '24rem' : '0px' }}>
-        {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between p-3 bg-[#FAF9F6] border-b border-gray-200">
-          <h3 className="font-bold text-[#392d22]">💳 Bill</h3>
-          <span className="text-sm font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
-        </div>
-
-        {/* Desktop Header */}
-        <div className="hidden lg:flex lg:p-4 lg:bg-gradient-to-r lg:from-[#392d22] lg:to-[#2d2018]">
-          <div className="flex items-center gap-2 text-white w-full">
-            <CreditCard size={18} />
-            <h3 className="font-serif text-lg">Bill / Receipt</h3>
-          </div>
-        </div>
-
-        {/* Customer Selection */}
-        <div className="p-3 lg:p-4 border-b border-gray-200 bg-[#FAF9F6]">
-          <label className="text-xs font-medium text-gray-700 uppercase tracking-wider block mb-2">Customer</label>
-          <input
-            type="text"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Enter customer name"
-            className="w-full px-2 py-2 bg-white border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-[#392d22] text-black"
-          />
-        </div>
-
-        {/* Cart Items - Scrollable */}
-        <div className="flex-1 overflow-y-auto divide-y">
-          {cart.map((item) => (
-            <div key={item.id} className="p-3 border-b border-gray-100">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex-1">
-                  <p className="font-semibold text-[#392d22] text-xs md:text-sm">{item.name}</p>
-                  <p className="text-xs text-gray-600">Rs. {item.price} × {item.quantity}</p>
-                </div>
-                <p className="font-bold text-[#d4af37] text-xs md:text-sm">Rs. {(item.price * item.quantity).toLocaleString()}</p>
+          <div className="w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm overflow-auto">
+            {/* Desktop Header */}
+            <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018]">
+              <div className="flex items-center gap-2 text-white w-full">
+                <CreditCard size={18} />
+                <h3 className="font-serif text-lg">Bill / Receipt</h3>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
+            </div>
+
+            {/* Customer Selection */}
+            <div className="p-3 lg:p-4 border-b border-gray-200 bg-[#FAF9F6]">
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wider block mb-2">Customer</label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Enter customer name"
+                className="w-full px-2 py-2 bg-white border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-[#392d22] text-black"
+              />
+            </div>
+
+            {/* Cart Items - Scrollable */}
+            <div className="flex-1 overflow-y-auto divide-y">
+              {cart.map((item) => (
+                <div key={item.id} className="p-3 border-b border-gray-100">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <p className="font-semibold text-[#392d22] text-xs md:text-sm">{item.name}</p>
+                      <p className="text-xs text-gray-600">Rs. {item.price} × {item.quantity}</p>
+                    </div>
+                    <p className="font-bold text-[#d4af37] text-xs md:text-sm">Rs. {(item.price * item.quantity).toLocaleString()}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300 transition-colors"
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="w-6 text-center text-xs font-medium text-black">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="w-6 h-6 bg-[#392d22] text-white rounded flex items-center justify-center hover:bg-[#2d2018] transition-colors"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-red-600 hover:text-red-700 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Totals Section - Sticky */}
+            {cart.length > 0 && (
+              <div className="border-t border-gray-200 p-3 lg:p-4 space-y-3 bg-white">
+                <div className="space-y-1 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Subtotal:</span>
+                    <span className="font-semibold text-[#392d22]">Rs. {subtotal.toLocaleString()}</span>
+                  </div>
+
+                  {discountPercent > 0 && (
+                    <div className="flex justify-between text-red-600">
+                      <span>Discount ({discountPercent}%):</span>
+                      <span className="font-semibold">-Rs. {discountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 py-2 px-2 bg-[#FAF9F6] rounded">
+                    <span className="text-gray-700 text-xs">Disc %:</span>
+                    <input
+                      type="number"
+                      value={discountPercent}
+                      onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
+                      min="0"
+                      max="100"
+                      className="flex-1 bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#392d22]"
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-[#392d22]">Total:</span>
+                    <span className="text-xl md:text-2xl font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300 transition-colors"
+                    onClick={() => {
+                      const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+                      setPreviewReceipt({
+                        receiptNumber,
+                        items: cart,
+                        subtotal,
+                        discount: discountAmount,
+                        discountPercent,
+                        tax: 0,
+                        total,
+                        paid: 0,
+                        change: 0,
+                        paymentMethod: 'PENDING',
+                        cashierName: 'Receptionist',
+                      });
+                      setIsReceiptPreviewOpen(true);
+                    }}
+                    className="w-full bg-blue-600 text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
                   >
-                    <Minus size={12} />
+                    Preview Receipt
                   </button>
-                  <span className="w-6 text-center text-xs font-medium text-black">{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="w-6 h-6 bg-[#392d22] text-white rounded flex items-center justify-center hover:bg-[#2d2018] transition-colors"
+                    onClick={() => setIsPaymentModalOpen(true)}
+                    className="w-full bg-[#392d22] text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-[#2d2018] transition-colors"
                   >
-                    <Plus size={12} />
+                    Pay
+                  </button>
+                  <button
+                    onClick={clearCart}
+                    className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition-colors"
+                  >
+                    Clear
                   </button>
                 </div>
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="text-red-600 hover:text-red-700 transition-colors"
-                >
-                  <Trash2 size={14} />
-                </button>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Totals Section - Sticky */}
-        {cart.length > 0 && (
-          <div className="border-t border-gray-200 p-3 lg:p-4 space-y-3 bg-white">
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-700">Subtotal:</span>
-                <span className="font-semibold text-[#392d22]">Rs. {subtotal.toLocaleString()}</span>
-              </div>
-              
-              {discountPercent > 0 && (
-                <div className="flex justify-between text-red-600">
-                  <span>Discount ({discountPercent}%):</span>
-                  <span className="font-semibold">-Rs. {discountAmount.toLocaleString()}</span>
-                </div>
-              )}
-
-              <div className="flex items-center gap-2 py-2 px-2 bg-[#FAF9F6] rounded">
-                <span className="text-gray-700 text-xs">Disc %:</span>
-                <input
-                  type="number"
-                  value={discountPercent}
-                  onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
-                  min="0"
-                  max="100"
-                  className="flex-1 bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#392d22]"
-                />
-              </div>
-            </div>
-
-            <div className="border-t border-gray-200 pt-3">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-[#392d22]">Total:</span>
-                <span className="text-xl md:text-2xl font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-                  setPreviewReceipt({
-                    receiptNumber,
-                    items: cart,
-                    subtotal,
-                    discount: discountAmount,
-                    discountPercent,
-                    tax: 0,
-                    total,
-                    paid: 0,
-                    change: 0,
-                    paymentMethod: 'PENDING',
-                    cashierName: 'Receptionist',
-                  });
-                  setIsReceiptPreviewOpen(true);
-                }}
-                className="w-full bg-blue-600 text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
-              >
-                Preview Receipt
-              </button>
-              <button
-                onClick={() => setIsPaymentModalOpen(true)}
-                className="w-full bg-[#392d22] text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-[#2d2018] transition-colors"
-              >
-                Pay
-              </button>
-              <button
-                onClick={clearCart}
-                className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition-colors"
-              >
-                Clear
-              </button>
-            </div>
+            )}
           </div>
-        )}
-
         </div>
       </div>
-    </div>
 
-    {/* MOBILE LAYOUT - Show on small screens */}
-    <div className="lg:hidden">
-      {/* Mobile content would go here */}
-    </div>
 
     {/* PAYMENT MODAL */}
     <Modal

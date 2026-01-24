@@ -32,7 +32,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   };
 
   return (
-    <header className="bg-white border-b border-gray-200  sticky top-0 z-30">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
       <div className="flex items-center justify-between px-4 h-16 md:px-6">
         {/* Left Section */}
         <div className="flex items-center gap-4">

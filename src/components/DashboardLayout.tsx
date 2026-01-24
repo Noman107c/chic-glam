@@ -20,20 +20,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
-  // Handle responsive sidebar behavior
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -65,7 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-[#FAF9F6] p-6">
+        <main className="flex-1 overflow-auto bg-[#FAF9F6] p-4 md:p-6">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
