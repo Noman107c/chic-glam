@@ -36,13 +36,33 @@ body {
   border: 2px solid var(--secondary-color);
   border-radius: 0.75rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  padding: 2rem;
-  max-width: 28rem;
+  padding: 1rem;
   width: 100%;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .login-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .login-card {
+    padding: 2rem;
+  }
+}
+
 .login-logo {
-  margin: 0 auto 0.5rem;
-  height: 4rem;
+  margin: 0 auto 0.25rem;
+  height: 3rem;
   width: auto;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .login-logo {
+    height: 3.5rem;
+  }
 }
