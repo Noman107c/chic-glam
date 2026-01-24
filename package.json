@@ -18,8 +18,10 @@
     "next": "16.1.4",
     "next-pwa": "^5.6.0",
     "node-fetch": "^2.7.0",
+    "pg": "^8.17.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-resizable-panels": "^4.4.2",
     "recharts": "^2.10.3"
   },
   "devDependencies": {

@@ -1,326 +1,354 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Card, CardHeader, CardBody } from '@/components/ui/Card';
-import { DataTable, Column } from '@/components/tables/DataTable';
-import { Badge } from '@/components/ui/Badge';
-import { Modal } from '@/components/ui/Modal';
-import { Transaction, TransactionType, Invoice } from '@/types';
-import { formatDate } from '@/utils';
-import financeService from '@/services/finance.service';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  PieChart,
+  BarChart3,
+  Download,
+  Plus,
+  Filter,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, PieChart as PieChartComponent, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const MOCK_TRANSACTIONS: Transaction[] = [
+
+interface FinanceRecord {
+  id: string;
+  date: string;
+  type: 'income' | 'expense';
+  category: string;
+  description: string;
+  amount: number;
+  paymentMethod: string;
+  reference?: string;
+}
+
+interface FinanceSummary {
+  totalIncome: number;
+  totalExpense: number;
+  netProfit: number;
+  pendingPayments: number;
+}
+
+const mockFinanceRecords: FinanceRecord[] = [
   {
     id: '1',
-    type: 'income' as TransactionType,
-    amount: 5000,
-    description: 'Membership Payment',
-    category: 'Membership',
-    branchId: '1',
-    paymentMethod: 'Card',
-    date: new Date(),
-    createdAt: new Date(),
+    date: '2024-01-24',
+    type: 'income',
+    category: 'Salon Services',
+    description: 'Facial & Hair Services',
+    amount: 15000,
+    paymentMethod: 'Cash',
   },
   {
     id: '2',
-    type: 'expense' as TransactionType,
-    amount: 2000,
-    description: 'Staff Salary',
-    category: 'Salaries',
-    branchId: '1',
-    paymentMethod: 'Bank Transfer',
-    date: new Date(),
-    createdAt: new Date(),
+    date: '2024-01-24',
+    type: 'income',
+    category: 'Gym Membership',
+    description: 'Monthly membership fee',
+    amount: 25000,
+    paymentMethod: 'Online',
   },
   {
     id: '3',
-    type: 'income' as TransactionType,
-    amount: 3500,
-    description: 'Service Income',
-    category: 'Service',
-    branchId: '2',
-    paymentMethod: 'Cash',
-    date: new Date(),
-    createdAt: new Date(),
+    date: '2024-01-24',
+    type: 'expense',
+    category: 'Supplies',
+    description: 'Beauty supplies purchase',
+    amount: 8000,
+    paymentMethod: 'Cheque',
+  },
+  {
+    id: '4',
+    date: '2024-01-23',
+    type: 'income',
+    category: 'Products Sale',
+    description: 'Product sales',
+    amount: 12000,
+    paymentMethod: 'Card',
   },
 ];
 
-const MOCK_INVOICES: Invoice[] = [
-  {
-    id: '1',
-    invoiceNumber: 'INV-001',
-    transactionId: 'TXN-001',
-    customerId: '1',
-    branchId: '1',
-    items: [],
-    subtotal: 5000,
-    tax: 500,
-    discount: 0,
-    total: 5500,
-    status: 'paid',
-    paymentStatus: 'paid',
-    issueDate: new Date(),
-    dueDate: new Date(),
-    paidDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
+const chartData = [
+  { month: 'Jan', income: 120000, expense: 40000 },
+  { month: 'Feb', income: 150000, expense: 45000 },
+  { month: 'Mar', income: 180000, expense: 50000 },
+  { month: 'Apr', income: 160000, expense: 48000 },
 ];
+
+const pieData = [
+  { name: 'Salon Services', value: 45 },
+  { name: 'Gym', value: 35 },
+  { name: 'Products', value: 20 },
+];
+
+const COLORS = ['#8b5cf6', '#ec4899', '#06b6d4'];
 
 export default function FinancePage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'invoices'>('overview');
-  const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
-  const [invoices, setInvoices] = useState(MOCK_INVOICES);
-  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [records, setRecords] = useState<FinanceRecord[]>(mockFinanceRecords);
+  const [activeTab, setActiveTab] = useState<'overview' | 'records' | 'reports'>('overview');
+  const [showDetails, setShowDetails] = useState(false);
+  const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
 
-  useEffect(() => {
-    loadFinanceData();
-  }, []);
-
-  const loadFinanceData = async () => {
-    try {
-      setLoading(true);
-
-      // Load transactions
-      const transactionsResponse = await financeService.getTransactions();
-      if (transactionsResponse.success && transactionsResponse.data) {
-        setTransactions(transactionsResponse.data.data);
-      }
-
-      // Load invoices
-      const invoicesResponse = await financeService.getInvoices();
-      if (invoicesResponse.success && invoicesResponse.data) {
-        setInvoices(invoicesResponse.data.data);
-      }
-    } catch (error) {
-      console.error('Error loading finance data:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Calculate summary
+  const summary: FinanceSummary = {
+    totalIncome: records.filter((r) => r.type === 'income').reduce((sum, r) => sum + r.amount, 0),
+    totalExpense: records.filter((r) => r.type === 'expense').reduce((sum, r) => sum + r.amount, 0),
+    netProfit: 0,
+    pendingPayments: 25000,
   };
+  summary.netProfit = summary.totalIncome - summary.totalExpense;
 
-  const totalIncome = transactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalExpense = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-  const netProfit = totalIncome - totalExpense;
+  // Filter records
+  const filteredRecords =
+    filterType === 'all' ? records : records.filter((r) => r.type === filterType);
 
-  const transactionColumns: Column<Transaction>[] = [
-    {
-      key: 'date',
-      label: 'Date',
-      render: (value: Date) => formatDate(value),
-    },
-    {
-      key: 'description',
-      label: 'Description',
-    },
-    {
-      key: 'category',
-      label: 'Category',
-    },
-    {
-      key: 'paymentMethod',
-      label: 'Method',
-    },
-    {
-      key: 'amount',
-      label: 'Amount',
-      render: (value: number, row: Transaction) => (
-        <span className={row.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-          {row.type === 'income' ? '+' : '-'}{ (value)}
-        </span>
-      ),
-    },
-  ];
-
-  const invoiceColumns: Column<Invoice>[] = [
-    {
-      key: 'invoiceNumber',
-      label: 'Invoice #',
-      sortable: true,
-    },
-    {
-      key: 'customerId',
-      label: 'Customer ID',
-    },
-    {
-      key: 'total',
-      label: 'Amount',
-      render: (value: number) =>  (value),
-    },
-    {
-      key: 'paymentStatus',
-      label: 'Payment Status',
-      render: (value: string) => (
-        <Badge
-          label={value}
-          variant={value === 'paid' ? 'success' : 'warning'}
-          size="sm"
-        />
-      ),
-    },
-    {
-      key: 'issueDate',
-      label: 'Date',
-      render: (value: Date) => formatDate(value),
-    },
-  ];
-
-  return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Finance</h1>
-        <p className="text-gray-700">Manage financial transactions and invoices</p>
+  // Overview Tab
+  const OverviewTab = () => (
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Income', value: summary.totalIncome, icon: TrendingUp, color: 'green' },
+          { label: 'Total Expense', value: summary.totalExpense, icon: TrendingDown, color: 'red' },
+          { label: 'Net Profit', value: summary.netProfit, icon: DollarSign, color: 'blue' },
+          { label: 'Pending Payments', value: summary.pendingPayments, icon: Filter, color: 'yellow' },
+        ].map((card) => (
+          <motion.div
+            key={card.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`bg-gradient-to-br from-${card.color}-50 to-${card.color}-100 p-6 rounded-lg border border-${card.color}-200`}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-sm text-gray-600 font-medium">{card.label}</div>
+                <div className="text-3xl font-bold text-gray-800 mt-2">
+                  Rs {card.value.toLocaleString()}
+                </div>
+              </div>
+              <card.icon className={`text-${card.color}-600`} size={32} />
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Financial Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6  p-6 ">
-        <Card>
-          <CardBody>
-            <p className="text-sm font-medium text-gray-700 mb-2 ">
-              Total Income
-            </p>
-            <p className="text-3xl font-bold text-green-600">
-              { (totalIncome)}
-            </p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Total Expense
-            </p>
-            <p className="text-3xl font-bold text-red-600">
-              { (totalExpense)}
-            </p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Net Profit
-            </p>
-            <p className={`text-3xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-              { (netProfit)}
-            </p>
-          </CardBody>
-        </Card>
-      </div>
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Line Chart */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Income vs Expense Trend</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} />
+              <Line type="monotone" dataKey="expense" stroke="#ef4444" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
-        {['overview', 'transactions', 'invoices'].map(tab => (
+        {/* Pie Chart */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Income by Category</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChartComponent>
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, value }) => `${name}: ${value}%`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChartComponent>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Bar Chart */}
+        <div className="bg-white p-6 rounded-lg shadow lg:col-span-2">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Monthly Performance</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="income" fill="#8b5cf6" />
+              <Bar dataKey="expense" fill="#ec4899" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Records Tab
+  const RecordsTab = () => (
+    <div className="space-y-4">
+      {/* Filter */}
+      <div className="flex gap-2 mb-4">
+        {(['all', 'income', 'expense'] as const).map((type) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab as any)}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              activeTab === tab
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+            key={type}
+            onClick={() => setFilterType(type)}
+            className={`px-4 py-2 rounded-lg font-semibold capitalize transition ${
+              filterType === type
+                ? 'bg-purple-600 text-white'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
             }`}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {type}
           </button>
         ))}
       </div>
 
-      {/* Overview Tab */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader title="Recent Transactions" />
-            <CardBody>
-              <div className="space-y-3">
-                {transactions.slice(0, 5).map(transaction => (
-                  <div
-                    key={transaction.id}
-                    className="flex justify-between items-center p-3 rounded-lg bg-gray-50"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {transaction.description}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {transaction.category}
-                      </p>
-                    </div>
+      {/* Records Table */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-100 border-b border-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Type</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRecords.map((record) => (
+                <tr key={record.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm text-gray-600">{record.date}</td>
+                  <td className="px-4 py-3 text-sm">
                     <span
-                      className={`text-lg font-bold ${
-                        transaction.type === 'income'
-                          ? 'text-green-600'
-                          : 'text-red-600'
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        record.type === 'income'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {transaction.type === 'income' ? '+' : '-'}
-                      { (transaction.amount)}
+                      {record.type.toUpperCase()}
                     </span>
-                  </div>
-                ))}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-800">{record.category}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{record.description}</td>
+                  <td className="px-4 py-3 text-sm font-bold text-gray-800">
+                    Rs {record.amount.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{record.paymentMethod}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Reports Tab
+  const ReportsTab = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Summary Report */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Financial Summary</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center pb-3 border-b">
+              <span className="text-gray-600">Total Income</span>
+              <span className="text-green-600 font-bold">Rs {summary.totalIncome.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center pb-3 border-b">
+              <span className="text-gray-600">Total Expense</span>
+              <span className="text-red-600 font-bold">Rs {summary.totalExpense.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center pt-3 bg-purple-50 p-3 rounded">
+              <span className="text-gray-800 font-semibold">Net Profit</span>
+              <span className="text-purple-600 font-bold text-lg">
+                Rs {summary.netProfit.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Breakdown */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Category Breakdown</h3>
+          <div className="space-y-2">
+            {pieData.map((item) => (
+              <div key={item.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{
+                      backgroundColor: COLORS[pieData.indexOf(item) % COLORS.length],
+                    }}
+                  />
+                  <span className="text-gray-700">{item.name}</span>
+                </div>
+                <span className="font-bold text-gray-800">{item.value}%</span>
               </div>
-            </CardBody>
-          </Card>
-
-          <Card>
-            <CardHeader title="Pending Invoices" />
-            <CardBody>
-              <div className="space-y-3">
-                {invoices
-                  .filter(i => i.paymentStatus !== 'paid')
-                  .map(invoice => (
-                    <div
-                      key={invoice.id}
-                      className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {invoice.invoiceNumber}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Due: {formatDate(invoice.dueDate)}
-                        </p>
-                      </div>
-                      <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                        { (invoice.total)}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            </CardBody>
-          </Card>
+            ))}
+          </div>
         </div>
-      )}
+      </div>
+    </div>
+  );
 
-      {/* Transactions Tab */}
-      {activeTab === 'transactions' && (
-        <div className="space-y-4">
-          <Button variant="primary">+ Add Transaction</Button>
-          <DataTable
-            columns={transactionColumns}
-            data={transactions}
-            title="All Transactions"
-          />
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">Finance & Accounting</h1>
+            <p className="text-gray-600">Monitor income, expenses, and financial performance</p>
+          </div>
+          <button className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700">
+            <Download size={18} />
+            Export Report
+          </button>
         </div>
-      )}
 
-      {/* Invoices Tab */}
-      {activeTab === 'invoices' && (
-        <div className="space-y-4">
-          <Button variant="primary">+ Create Invoice</Button>
-          <DataTable
-            columns={invoiceColumns}
-            data={invoices}
-            title="All Invoices"
-          />
+        {/* Tabs */}
+        <div className="flex gap-4 mb-6 border-b border-gray-200">
+          {(['overview', 'records', 'reports'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-3 font-semibold capitalize border-b-2 transition ${
+                activeTab === tab
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
-      )}
+
+        {/* Tab Content */}
+        {activeTab === 'overview' && <OverviewTab />}
+        {activeTab === 'records' && <RecordsTab />}
+        {activeTab === 'reports' && <ReportsTab />}
+      </div>
     </div>
   );
 }

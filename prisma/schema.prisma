@@ -23,8 +23,11 @@ model User {
   updatedAt DateTime   @updatedAt
 
   // Relationships
-  transactions   Transaction[]
-  beauticianInfo Beautician?
+  transactions    Transaction[]
+  beauticianInfo  Beautician?
+  employeeInfo    Employee?
+  attendanceLogs  AttendanceLog[]
+  leaveRequests   LeaveRequest[]
 
   @@map("users")
 }
@@ -33,6 +36,9 @@ enum UserRole {
   SUPER_ADMIN
   RECEPTIONIST
   BEAUTICIAN
+  MANAGER
+  STAFF
+  HR
 }
 
 model Beautician {
@@ -159,8 +165,48 @@ model Transaction {
   payments        Payment[]
   coupon          Coupon?   @relation(fields: [couponId], references: [id])
   membership      MembershipCard? @relation(fields: [membershipId], references: [id])
+  receipt         Receipt?
 
   @@map("transactions")
+}
+
+model Receipt {
+  id              String    @id @default(cuid())
+  receiptNumber   String    @unique
+  transactionId   String    @unique
+  
+  businessName    String    @default("Chic & Glam")
+  businessPhone   String?
+  businessEmail   String?
+  businessAddress String?
+  businessLogo    String?
+  
+  customerName    String
+  customerPhone   String?
+  customerEmail   String?
+  
+  cashierName     String
+  
+  items           Json      // Store item details as JSON
+  subtotal        Float
+  discount        Float
+  discountPercent Float     @default(0)
+  tax             Float
+  total           Float
+  paid            Float
+  change          Float     @default(0)
+  
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus
+  
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  transaction     Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@map("receipts")
 }
 
 model TransactionItem {
@@ -285,4 +331,102 @@ enum MemberType {
   SILVER
   GOLD
   PLATINUM
+}
+
+model Employee {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  
+  department      String?
+  position        String?
+  joinDate        DateTime  @default(now())
+  salary          Float?
+  
+  emergencyContact String?
+  emergencyPhone  String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendanceLogs  AttendanceLog[]
+  leaveRequests   LeaveRequest[]
+
+  @@map("employees")
+}
+
+model AttendanceLog {
+  id              String    @id @default(cuid())
+  userId          String
+  employeeId      String
+  
+  checkInTime     DateTime
+  checkOutTime    DateTime?
+  
+  isLate          Boolean   @default(false)
+  isAbsent        Boolean   @default(false)
+  overtime        Float     @default(0)  // in minutes
+  
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("attendance_logs")
+}
+
+model LeaveRequest {
+  id              String    @id @default(cuid())
+  userId          String
+  employeeId      String
+  
+  leaveType       LeaveType
+  startDate       DateTime
+  endDate         DateTime
+  reason          String?
+  
+  status          LeaveStatus @default(PENDING)
+  approvedBy      String?    // userId of approver
+  approvedAt      DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("leave_requests")
+}
+
+enum LeaveType {
+  SICK
+  CASUAL
+  EARNED
+  UNPAID
+  MATERNITY
+  PATERNITY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model Category {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  description     String?
+  icon            String?
+  color           String?
+  
+  isActive        Boolean   @default(true)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("categories")
 }

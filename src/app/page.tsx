@@ -3,14 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Trash2, X, CreditCard, DollarSign, ShoppingCart, User, Phone, CheckCircle, LogIn } from 'lucide-react';
+import { Plus, Minus, Trash2, X, CreditCard, DollarSign, ShoppingCart, User, Phone, CheckCircle, LogIn, Printer } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
+import { Receipt } from '@/components/Receipt';
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 
 // Mock data for products/services with images
 const mockProducts = [
   // Hair Category
   { id: 1, name: 'Hair Styling', price: 1500, category: 'Hair', serviceType: 'Beauty Salon', image: '💇', description: 'Professional hair styling' },
-  { id: 2, name: 'Hair Treatment', price: 2500, category: 'Hair', serviceType: 'Beauty Salon', image: '💆', description: 'Deep conditioning treatment' },
+  { id: 2, name: 'Hair Treatment', price:2500, category: 'Hair', serviceType: 'Beauty Salon', image: '💆', description: 'Deep conditioning treatment' },
   { id: 3, name: 'Hair Coloring', price: 3500, category: 'Hair', serviceType: 'Beauty Salon', image: '💇‍♀️', description: 'Full hair color service' },
 
   // Makeup Category
@@ -88,8 +90,12 @@ export default function POSPage() {
   const [customerName, setCustomerName] = useState<string>('');
   const [discountPercent, setDiscountPercent] = useState(0);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [cashReceived, setCashReceived] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
+  const [receipt, setReceipt] = useState<any>(null);
+  const [isReceiptPreviewOpen, setIsReceiptPreviewOpen] = useState(false);
+  const [previewReceipt, setPreviewReceipt] = useState<any>(null);
 
   // Filter products by service type
   const serviceFilteredProducts = mockProducts.filter(p => p.serviceType === selectedServiceType);
@@ -141,6 +147,8 @@ export default function POSPage() {
     setSelectedCustomer(null);
     setDiscountPercent(0);
     setCashReceived('');
+    setReceipt(null);
+    setCustomerName('');
   };
 
   // Calculations
@@ -151,270 +159,379 @@ export default function POSPage() {
   const change = cashReceived ? Math.max(0, parseFloat(cashReceived) - total) : 0;
   const isPaymentValid = !cashReceived || parseFloat(cashReceived) < total;
 
-  return (
-    <div className="flex h-screen bg-[#FAF9F6] overflow-hidden">
-      {/* LEFT PANEL - CATEGORIES (20-25%) */}
-      <div className="w-1/4 bg-white border-r border-gray-200 flex flex-col shadow-sm">
-        {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018]">
-          <h1 className="text-xl font-serif text-white">Chic & Glam</h1>
-          <p className="text-xs text-gray-300 uppercase tracking-wider">POS System</p>
-        </div>
+  const handlePaymentComplete = () => {
+    const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
-        {/* Service Type Filter */}
-        <div className="p-3 border-b border-gray-200 bg-[#FAF9F6]">
-          <div className="flex gap-2">
-            <motion.button
-              onClick={() => {
-                setSelectedServiceType('Beauty Salon');
-                setSelectedCategory('Hair'); // Reset to first category
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex-1 p-3 rounded-lg font-medium text-sm transition-all ${
-                selectedServiceType === 'Beauty Salon'
-                  ? 'bg-[#392d22] text-white shadow-md'
-                  : 'bg-white text-[#392d22] hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              💄 Beauty Salon
-            </motion.button>
-            <motion.button
-              onClick={() => {
-                setSelectedServiceType('Gym');
-                setSelectedCategory('Training'); // Reset to first category
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex-1 p-3 rounded-lg font-medium text-sm transition-all ${
-                selectedServiceType === 'Gym'
-                  ? 'bg-[#392d22] text-white shadow-md'
-                  : 'bg-white text-[#392d22] hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              💪 Gym
-            </motion.button>
-          </div>
-        </div>
+    setReceipt({
+      receiptNumber,
+      items: cart,
+      subtotal,
+      discount: discountAmount,
+      discountPercent,
+      tax: 0,
+      total,
+      paid: parseFloat(cashReceived) || 0,
+      change,
+      paymentMethod,
+      cashierName: 'Receptionist',
+    });
 
-        {/* Categories List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
-          {categories.map((category) => (
-            <motion.button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`w-full p-3 rounded-lg text-left transition-all font-medium text-sm uppercase tracking-wider ${
-                selectedCategory === category
-                  ? 'bg-[#392d22] text-white shadow-md'
-                  : 'bg-[#FAF9F6] text-[#392d22] hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  {category === 'Hair' && '💇'}
-                  {category === 'Makeup' && '💄'}
-                  {category === 'Nails' && '💅'}
-                  {category === 'Skincare' && '🧖'}
-                  {category === 'Personal Training' && '💪'}
-                  {category === 'Strength Training' && '🏋️'}
-                  {category === 'Cardio' && '🏃'}
-                  {category === 'Yoga' && '🧘'}
-                  {category === 'CrossFit' && '🏋️‍♂️'}
-                  {category === 'Combat Sports' && '🥊'}
-                  {category === 'Swimming' && '🏊'}
-                  {category === 'Nutrition' && '🥗'}
-                  {category === 'Group Fitness' && '👥'}
-                  {category === 'Pilates' && '🤸'}
-                  {category === 'Martial Arts' && '🥋'}
-                  {category === 'Dance Fitness' && '💃'}
-                  {category === 'HIIT' && '⚡'}
-                  {category === 'Cycling' && '🚴'}
-                  {category === 'Aerobics' && '🎵'}
-                </span>
-                <span>{category}</span>
-              </div>
-            </motion.button>
-          ))}
-        </div>
+    setIsPaymentModalOpen(false);
+    setIsReceiptModalOpen(true);
 
-        {/* Cart Count */}
-        <div className="p-4 border-t border-gray-200 bg-[#FAF9F6]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#392d22]">Items:</span>
-            <span className="text-2xl font-bold text-[#d4af37]">{cart.length}</span>
-          </div>
-          <div className="text-xs text-gray-600 mt-1">
-            Total Qty: {cart.reduce((sum, item) => sum + item.quantity, 0)}
-          </div>
-        </div>
-      </div>
-
-      {/* CENTER PANEL - PRODUCTS (50-55%) */}
-      <div className="flex-1 bg-[#FAF9F6] flex flex-col overflow-hidden">
-        {/* Category Header */}
-        <div className="bg-gradient-to-r from-[#392d22] to-[#2d2018] px-5 py-3 shadow-sm">
-          <h2 className="text-2xl font-serif text-white">{selectedCategory} Services</h2>
-          <p className="text-sm text-gray-300">Click to add items to cart</p>
-        </div>
-
-        {/* Products Grid */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-2 gap-4">
-            <AnimatePresence mode="wait">
-              {filteredProducts.map((product) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  whileHover={{ translateY: -4 }}
-                  onClick={() => addToCart(product)}
-                  className="bg-white rounded-lg border border-gray-200 hover:border-[#d4af37] shadow-sm hover:shadow-md transition-all cursor-pointer p-4 h-full flex flex-col"
-                >
-                  <div className="text-4xl mb-2 text-center">{product.image}</div>
-                  <h3 className="font-semibold text-[#392d22] text-sm line-clamp-2 mb-1">{product.name}</h3>
-                  <p className="text-xs text-gray-600 flex-1">{product.description}</p>
-
-                  {/* Additional Details */}
-                  <div className="mt-2 space-y-1">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <span>⏱️</span>
-                      <span>{product.serviceType === 'Beauty Salon' ? '45-60 mins' : '60 mins'}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <span>⭐</span>
-                      <span>Professional Service</span>
-                    </div>
-                    {product.serviceType === 'Gym' && (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <span>💪</span>
-                        <span>Expert Trainer</span>
+    // Auto-print receipt after payment completion
+    setTimeout(() => {
+      const receiptElement = document.querySelector('.receipt-print-area');
+      if (receiptElement) {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>Receipt - ${receiptNumber}</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                  .receipt { max-width: 300px; margin: 0 auto; }
+                  .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+                  .item { display: flex; justify-content: space-between; margin: 5px 0; }
+                  .total { border-top: 1px solid #000; padding-top: 10px; font-weight: bold; }
+                  @media print { body { margin: 0; } }
+                </style>
+              </head>
+              <body>
+                <div class="receipt">
+                  <div class="header">
+                    <h2>Chic & Glam</h2>
+                    <p>Premium Beauty & Fitness Services</p>
+                    <p>Receipt: ${receiptNumber}</p>
+                  </div>
+                  <div class="items">
+                    ${cart.map(item => `
+                      <div class="item">
+                        <span>${item.name} × ${item.quantity}</span>
+                        <span>Rs. ${(item.price * item.quantity).toLocaleString()}</span>
                       </div>
-                    )}
+                    `).join('')}
                   </div>
-
-                  <div className="flex justify-between items-end mt-3 pt-3 border-t border-gray-100">
-                    <span className="text-xs text-gray-600 uppercase tracking-wider">{product.category}</span>
-                    <span className="text-lg font-bold text-[#d4af37]">Rs. {product.price}</span>
+                  <div class="total">
+                    <div class="item">
+                      <span>Subtotal:</span>
+                      <span>Rs. ${subtotal.toLocaleString()}</span>
+                    </div>
+                    ${discountPercent > 0 ? `
+                      <div class="item">
+                        <span>Discount (${discountPercent}%):</span>
+                        <span>-Rs. ${discountAmount.toLocaleString()}</span>
+                      </div>
+                    ` : ''}
+                    <div class="item">
+                      <span>Total:</span>
+                      <span>Rs. ${total.toLocaleString()}</span>
+                    </div>
+                    <div class="item">
+                      <span>Paid:</span>
+                      <span>Rs. ${(parseFloat(cashReceived) || 0).toLocaleString()}</span>
+                    </div>
+                    ${change > 0 ? `
+                      <div class="item">
+                        <span>Change:</span>
+                        <span>Rs. ${change.toLocaleString()}</span>
+                      </div>
+                    ` : ''}
                   </div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    className="mt-3 w-full bg-[#392d22] text-white py-2 rounded text-xs font-medium text-center"
-                  >
-                    + Add to Cart
-                  </motion.div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+                  <div style="text-align: center; margin-top: 20px; font-size: 12px;">
+                    <p>Thank you for your business!</p>
+                    <p>${new Date().toLocaleString()}</p>
+                  </div>
+                </div>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+          printWindow.print();
+        }
+      }
+    }, 1000); // Delay to ensure receipt modal is rendered
+  };
 
-          {filteredProducts.length === 0 && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <ShoppingCart size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">No products in this category</p>
+  return (
+    <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
+      {/* DESKTOP PANEL LAYOUT */}
+      <div className="hidden lg:block lg:flex-1">
+        <div className="flex h-full">
+          {/* LEFT PANEL - CATEGORIES */}
+          <div className="w-1/4 bg-white border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
+            {/* Header */}
+            <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018]">
+              <h1 className="text-xl font-serif text-white">Chic & Glam</h1>
+              <p className="text-xs text-gray-300 uppercase tracking-wider">POS System</p>
+            </div>
+
+            {/* Service Type Filter */}
+            <div className="p-3 border-b border-gray-200 bg-[#FAF9F6]">
+              <div className="flex gap-2">
+                <motion.button
+                  onClick={() => {
+                    setSelectedServiceType('Beauty Salon');
+                    setSelectedCategory('Hair'); // Reset to first category
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`flex-1 p-3 rounded-lg font-medium text-sm transition-all ${
+                    selectedServiceType === 'Beauty Salon'
+                      ? 'bg-[#392d22] text-white shadow-md'
+                      : 'bg-white text-[#392d22] hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  💄 Beauty Salon
+                </motion.button>
+                <motion.button
+                  onClick={() => {
+                    setSelectedServiceType('Gym');
+                    setSelectedCategory('Training'); // Reset to first category
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`flex-1 p-3 rounded-lg font-medium text-sm transition-all ${
+                    selectedServiceType === 'Gym'
+                      ? 'bg-[#392d22] text-white shadow-md'
+                      : 'bg-white text-[#392d22] hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  💪 Gym
+                </motion.button>
               </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* RIGHT PANEL - BILL/RECEIPT (20-25%) */}
-      <div className="w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm">
-        {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018] py-3">
-          <div className="flex items-center justify-between text-white mb-2">
-            <div className="flex items-center gap-2">
-              <CreditCard size={18} />
-              <h3 className="font-serif text-lg">Bill / Receipt</h3>
+            {/* Categories List */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+              {categories.map((category) => (
+                <motion.button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full p-3 rounded-lg text-left transition-all font-medium text-sm uppercase tracking-wider ${
+                    selectedCategory === category
+                      ? 'bg-[#392d22] text-white shadow-md'
+                      : 'bg-[#FAF9F6] text-[#392d22] hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">
+                      {category === 'Hair' && '💇'}
+                      {category === 'Makeup' && '💄'}
+                      {category === 'Nails' && '💅'}
+                      {category === 'Skincare' && '🧖'}
+                      {category === 'Personal Training' && '💪'}
+                      {category === 'Strength Training' && '🏋️'}
+                      {category === 'Cardio' && '🏃'}
+                      {category === 'Yoga' && '🧘'}
+                      {category === 'CrossFit' && '🏋️‍♂️'}
+                      {category === 'Combat Sports' && '🥊'}
+                      {category === 'Swimming' && '🏊'}
+                      {category === 'Nutrition' && '🥗'}
+                      {category === 'Group Fitness' && '👥'}
+                      {category === 'Pilates' && '🤸'}
+                      {category === 'Martial Arts' && '🥋'}
+                      {category === 'Dance Fitness' && '💃'}
+                      {category === 'HIIT' && '⚡'}
+                      {category === 'Cycling' && '🚴'}
+                      {category === 'Aerobics' && '🎵'}
+                    </span>
+                    <span>{category}</span>
+                  </div>
+                </motion.button>
+              ))}
             </div>
-            <Link
-              href="/auth/login"
-              className="flex items-center gap-1 px-2 py-1 bg-white/10 hover:bg-white/20 rounded text-xs font-medium transition-colors"
-              title="Login"
-            >
-              <LogIn size={14} />
-              Login
-            </Link>
+
+            {/* Cart Count */}
+            <div className="p-4 border-t border-gray-200 bg-[#FAF9F6]">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-[#392d22]">Items:</span>
+                <span className="text-2xl font-bold text-[#d4af37]">{cart.length}</span>
+              </div>
+              <div className="text-xs text-gray-600 mt-1">
+                Total Qty: {cart.reduce((sum, item) => sum + item.quantity, 0)}
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-gray-300">{new Date().toLocaleDateString()}</p>
+
+          {/* CENTER PANEL - PRODUCTS (full width on mobile, 50-55% on desktop) */}
+          <div className="flex-1 bg-[#FAF9F6] flex flex-col overflow-hidden">
+            {/* Header with Mobile Category Tabs */}
+            <div className="bg-gradient-to-r from-[#392d22] to-[#2d2018] px-4 py-3 shadow-sm">
+              <h2 className="text-lg md:text-2xl font-serif text-white">{selectedCategory}</h2>
+
+              {/* Mobile Service Type Tabs */}
+              <div className="lg:hidden mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <motion.button
+                  onClick={() => {
+                    setSelectedServiceType('Beauty Salon');
+                    setSelectedCategory('Hair');
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                    selectedServiceType === 'Beauty Salon' ? 'bg-white text-[#392d22] shadow-md' : 'bg-[#2d2018] text-white border border-gray-400 hover:border-white'
+                  }`}
+                >
+                  💄 Beauty
+                </motion.button>
+                <motion.button
+                  onClick={() => {
+                    setSelectedServiceType('Gym');
+                    setSelectedCategory('Personal Training');
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                    selectedServiceType === 'Gym' ? 'bg-white text-[#392d22] shadow-md' : 'bg-[#2d2018] text-white border border-gray-400 hover:border-white'
+                  }`}
+                >
+                  💪 Gym
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Mobile Category Tabs */}
+            <div className="lg:hidden overflow-x-auto border-b border-gray-200 bg-white scrollbar-hide">
+              <div className="flex gap-2 p-3">
+                {categories.map((category) => (
+                  <motion.button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                      selectedCategory === category ? 'bg-[#392d22] text-white shadow-md' : 'bg-gray-100 text-[#392d22] hover:bg-gray-200'
+                    }`}
+                  >
+                    {category}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Products Grid - Responsive (2 cols on mobile, 3 on tablet, 2 on desktop) */}
+            <div className="flex-1 overflow-y-auto p-3 md:p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3 md:gap-4">
+                <AnimatePresence mode="wait">
+                  {filteredProducts.map((product) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      whileHover={{ translateY: -4 }}
+                      onClick={() => addToCart(product)}
+                      className="bg-white rounded-lg border border-gray-200 hover:border-[#d4af37] shadow-sm hover:shadow-md transition-all cursor-pointer p-3 md:p-4 h-full flex flex-col"
+                    >
+                      <div className="text-3xl md:text-4xl mb-2 text-center">{product.image}</div>
+                      <h3 className="font-semibold text-[#392d22] text-xs md:text-sm line-clamp-2 mb-1">{product.name}</h3>
+                      <p className="text-xs text-gray-600 flex-1 line-clamp-2">{product.description}</p>
+
+                      {/* Additional Details - Hidden on mobile */}
+                      <div className="hidden md:block mt-2 space-y-1">
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <span>⏱️</span>
+                          <span>{product.serviceType === 'Beauty Salon' ? '45-60 mins' : '60 mins'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-end mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-100">
+                        <span className="text-xs text-gray-600 uppercase tracking-wider hidden sm:inline">{product.category}</span>
+                        <span className="text-base md:text-lg font-bold text-[#d4af37]">Rs. {product.price}</span>
+                      </div>
+
+                      {/* Add to Cart Button - Mobile optimized */}
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="mt-2 md:mt-3 w-full bg-[#392d22] text-white py-2 rounded text-xs font-medium text-center hover:bg-[#2d2018] transition-colors"
+                      >
+                        + Add
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {filteredProducts.length === 0 && (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <ShoppingCart size={48} className="mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">No products found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* RIGHT PANEL - CART */}
+          <div className="w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm fixed lg:static bottom-0 left-0 right-0 lg:bottom-auto z-40 transition-all duration-300 max-h-96 lg:max-h-none overflow-hidden lg:overflow-visible"
+            style={{ height: cart.length > 0 ? 'auto' : '0px', maxHeight: cart.length > 0 ? '24rem' : '0px' }}>
+        {/* Mobile Header */}
+        <div className="lg:hidden flex items-center justify-between p-3 bg-[#FAF9F6] border-b border-gray-200">
+          <h3 className="font-bold text-[#392d22]">💳 Bill</h3>
+          <span className="text-sm font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden lg:flex lg:p-4 lg:bg-gradient-to-r lg:from-[#392d22] lg:to-[#2d2018]">
+          <div className="flex items-center gap-2 text-white w-full">
+            <CreditCard size={18} />
+            <h3 className="font-serif text-lg">Bill / Receipt</h3>
+          </div>
         </div>
 
         {/* Customer Selection */}
-        <div className="p-4 border-b border-gray-200 bg-[#FAF9F6]">
-          <label className="text-xs font-medium text-gray-700 uppercase tracking-wider block mb-2">
-            {selectedServiceType === 'Beauty Salon' ? 'Beautician' : 'Trainer'}
-          </label>
-          <select
-            value={selectedCustomer || ''}
-            onChange={(e) => setSelectedCustomer(Number(e.target.value) || null)}
+        <div className="p-3 lg:p-4 border-b border-gray-200 bg-[#FAF9F6]">
+          <label className="text-xs font-medium text-gray-700 uppercase tracking-wider block mb-2">Customer</label>
+          <input
+            type="text"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            placeholder="Enter customer name"
             className="w-full px-2 py-2 bg-white border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-[#392d22] text-black"
-          >
-            <option value="">
-              {selectedServiceType === 'Beauty Salon' ? 'Select Beautician' : 'Select Trainer'}
-            </option>
-            {(selectedServiceType === 'Beauty Salon' ? mockBeauticians : mockTrainers).map(person => (
-              <option key={person.id} value={person.id}>
-                {person.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
-        {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto">
-          {cart.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-              <ShoppingCart size={36} className="text-gray-300 mb-2" />
-              <p className="text-sm text-gray-500">No items added</p>
-              <p className="text-xs text-gray-400">Add services from the center</p>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {cart.map((item) => (
-                <div key={item.id} className="p-3 border-b border-gray-100">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <p className="font-semibold text-[#392d22] text-xs">{item.name}</p>
-                      <p className="text-xs text-gray-600">Rs. {item.price} × {item.quantity}</p>
-                    </div>
-                    <p className="font-bold text-[#d4af37] text-xs">Rs. {(item.price * item.quantity).toLocaleString()}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-6 h-6 bg-[#392d22] text-white rounded flex items-center justify-center hover:bg-[#2d2018] transition-colors"
-                      >
-                        <Minus size={12} />
-                      </button>
-                      <span className="w-6 text-center text-xs font-medium text-black">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-6 h-6 bg-[#392d22] text-white rounded flex items-center justify-center hover:bg-[#2d2018] transition-colors"
-                      >
-                        <Plus size={12} />
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-red-600 hover:text-red-700 transition-colors"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
+        {/* Cart Items - Scrollable */}
+        <div className="flex-1 overflow-y-auto divide-y">
+          {cart.map((item) => (
+            <div key={item.id} className="p-3 border-b border-gray-100">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex-1">
+                  <p className="font-semibold text-[#392d22] text-xs md:text-sm">{item.name}</p>
+                  <p className="text-xs text-gray-600">Rs. {item.price} × {item.quantity}</p>
                 </div>
-              ))}
+                <p className="font-bold text-[#d4af37] text-xs md:text-sm">Rs. {(item.price * item.quantity).toLocaleString()}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300 transition-colors"
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="w-6 text-center text-xs font-medium text-black">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="w-6 h-6 bg-[#392d22] text-white rounded flex items-center justify-center hover:bg-[#2d2018] transition-colors"
+                  >
+                    <Plus size={12} />
+                  </button>
+                </div>
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-red-600 hover:text-red-700 transition-colors"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
-          )}
+          ))}
         </div>
 
-        {/* Totals and Discount */}
+        {/* Totals Section - Sticky */}
         {cart.length > 0 && (
-          <div className="border-t border-gray-200 p-4 space-y-3">
-            <div className="space-y-2 text-xs">
+          <div className="border-t border-gray-200 p-3 lg:p-4 space-y-3 bg-white">
+            <div className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-gray-700">Subtotal:</span>
                 <span className="font-semibold text-[#392d22]">Rs. {subtotal.toLocaleString()}</span>
@@ -428,7 +545,7 @@ export default function POSPage() {
               )}
 
               <div className="flex items-center gap-2 py-2 px-2 bg-[#FAF9F6] rounded">
-                <span className="text-gray-700">Discount %:</span>
+                <span className="text-gray-700 text-xs">Disc %:</span>
                 <input
                   type="number"
                   value={discountPercent}
@@ -443,178 +560,239 @@ export default function POSPage() {
             <div className="border-t border-gray-200 pt-3">
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-[#392d22]">Total:</span>
-                <span className="text-2xl font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
+                <span className="text-xl md:text-2xl font-bold text-[#d4af37]">Rs. {total.toLocaleString()}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <button
-                onClick={() => setIsPaymentModalOpen(true)}
-                className="w-full bg-[#392d22] text-white py-3 rounded-lg font-semibold text-sm hover:bg-[#2d2018] transition-colors"
+                onClick={() => {
+                  const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+                  setPreviewReceipt({
+                    receiptNumber,
+                    items: cart,
+                    subtotal,
+                    discount: discountAmount,
+                    discountPercent,
+                    tax: 0,
+                    total,
+                    paid: 0,
+                    change: 0,
+                    paymentMethod: 'PENDING',
+                    cashierName: 'Receptionist',
+                  });
+                  setIsReceiptPreviewOpen(true);
+                }}
+                className="w-full bg-blue-600 text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
               >
-                Pay Now
+                Preview Receipt
+              </button>
+              <button
+                onClick={() => setIsPaymentModalOpen(true)}
+                className="w-full bg-[#392d22] text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-[#2d2018] transition-colors"
+              >
+                Pay
               </button>
               <button
                 onClick={clearCart}
                 className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition-colors"
               >
-                Clear Cart
+                Clear
               </button>
             </div>
           </div>
         )}
+
+        </div>
       </div>
+    </div>
 
-      {/* PAYMENT MODAL */}
-      <Modal
-        isOpen={isPaymentModalOpen}
-        title="Payment Confirmation"
-        onClose={() => setIsPaymentModalOpen(false)}
-        size="lg"
-      >
-        <div className="space-y-6">
-          {/* Customer Name Input */}
-          <div className="bg-[#FAF9F6] rounded-lg p-4">
-            <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Customer Information</h4>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Customer Name</label>
-                <input
-                  type="text"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Enter customer name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] text-sm text-black"
-                />
-              </div>
-            </div>
-          </div>
+    {/* MOBILE LAYOUT - Show on small screens */}
+    <div className="lg:hidden">
+      {/* Mobile content would go here */}
+    </div>
 
-          {/* Transaction Summary */}
-          <div className="bg-[#FAF9F6] rounded-lg p-4">
-            <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Transaction Summary</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-700">Date & Time:</span>
-                <span className="font-medium text-black">{new Date().toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-700">Customer:</span>
-                <span className="font-medium text-black">
-                  {customerName.trim() || 'Walk-in Customer'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-700">Items:</span>
-                <span className="font-medium text-black">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
-              </div>
+    {/* PAYMENT MODAL */}
+    <Modal
+      isOpen={isPaymentModalOpen}
+      title="Payment Confirmation"
+      onClose={() => setIsPaymentModalOpen(false)}
+      size="lg"
+    >
+      <div className="space-y-6">
+        {/* Customer Name Input */}
+        <div className="bg-[#FAF9F6] rounded-lg p-4">
+          <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Customer Information</h4>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Customer Name</label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Enter customer name"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] text-sm text-black"
+              />
             </div>
-          </div>
-
-          {/* Items Breakdown */}
-          <div>
-            <h4 className="font-semibold text-[#392d22] mb-2 text-sm uppercase tracking-wider">Items</h4>
-            <div className="border border-gray-200 rounded-lg divide-y max-h-[200px] overflow-y-auto">
-              {cart.map(item => (
-                <div key={item.id} className="p-2 flex justify-between text-xs">
-                  <span className="text-gray-700">{item.name} × {item.quantity}</span>
-                  <span className="font-semibold text-[#392d22]">Rs. {(item.price * item.quantity).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Amounts */}
-          <div className="bg-blue-50 rounded-lg p-4 space-y-2 text-sm border border-blue-200">
-            <div className="flex justify-between">
-              <span className="text-gray-700">Subtotal:</span>
-              <span className="font-semibold">Rs. {subtotal.toLocaleString()}</span>
-            </div>
-            {discountPercent > 0 && (
-              <div className="flex justify-between text-red-600">
-                <span>Discount ({discountPercent}%):</span>
-                <span className="font-semibold">-Rs. {discountAmount.toLocaleString()}</span>
-              </div>
-            )}
-            <div className="border-t border-blue-200 pt-2 flex justify-between font-bold">
-              <span>Total Amount:</span>
-              <span className="text-[#d4af37] text-lg">Rs. {total.toLocaleString()}</span>
-            </div>
-          </div>
-
-          {/* Payment Method Selection */}
-          <div>
-            <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Payment Method</h4>
-            <div className="space-y-2">
-              <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#392d22] transition-colors"
-                onClick={() => setPaymentMethod('cash')}>
-                <input type="radio" checked={paymentMethod === 'cash'} readOnly className="mr-3" />
-                <span className="font-medium text-sm text-black">Cash Payment</span>
-              </label>
-              <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#392d22] transition-colors"
-                onClick={() => setPaymentMethod('card')}>
-                <input type="radio" checked={paymentMethod === 'card'} readOnly className="mr-3" />
-                <CreditCard size={18} className="text-blue-600 mr-2" />
-                <span className="font-medium text-sm text-black">Card Payment</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Cash Details (if cash selected) */}
-          {paymentMethod === 'cash' && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Cash Received (Rs.)</label>
-                <input
-                  type="number"
-                  value={cashReceived}
-                  onChange={(e) => setCashReceived(e.target.value)}
-                  placeholder="Enter cash amount"
-                  min={total}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] text-sm text-black"
-                />
-              </div>
-              {cashReceived && (
-                <div className={`p-3 rounded-lg text-sm font-semibold ${
-                  parseFloat(cashReceived) >= total
-                    ? 'bg-green-100 text-green-800 border border-green-300'
-                    : 'bg-red-100 text-red-800 border border-red-300'
-                }`}>
-                  <div className="flex justify-between">
-                    <span>Change:</span>
-                    <span>Rs. {change.toLocaleString()}</span>
-                  </div>
-                </div>
-              )}
-              {cashReceived && parseFloat(cashReceived) < total && (
-                <p className="text-xs text-red-600 font-medium">⚠️ Insufficient amount</p>
-              )}
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => setIsPaymentModalOpen(false)}
-              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                setIsPaymentModalOpen(false);
-                clearCart();
-                alert('Payment successful! Receipt printed.');
-              }}
-              disabled={paymentMethod === 'cash' && isPaymentValid}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
-            >
-              <CheckCircle size={18} />
-              Complete Payment
-            </button>
           </div>
         </div>
-      </Modal>
-    </div>
+
+        {/* Transaction Summary */}
+        <div className="bg-[#FAF9F6] rounded-lg p-4">
+          <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Transaction Summary</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-700">Date & Time:</span>
+              <span className="font-medium text-black">{new Date().toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-700">Customer:</span>
+              <span className="font-medium text-black">
+                {customerName.trim() || 'Walk-in Customer'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-700">Items:</span>
+              <span className="font-medium text-black">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Items Breakdown */}
+        <div>
+          <h4 className="font-semibold text-[#392d22] mb-2 text-sm uppercase tracking-wider">Items</h4>
+          <div className="border border-gray-200 rounded-lg divide-y max-h-[200px] overflow-y-auto">
+            {cart.map(item => (
+              <div key={item.id} className="p-2 flex justify-between text-xs">
+                <span className="text-gray-700">{item.name} × {item.quantity}</span>
+                <span className="font-semibold text-[#392d22]">Rs. {(item.price * item.quantity).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Amounts */}
+        <div className="bg-blue-50 rounded-lg p-4 space-y-2 text-sm border border-blue-200">
+          <div className="flex justify-between">
+            <span className="text-gray-700">Subtotal:</span>
+            <span className="font-semibold">Rs. {subtotal.toLocaleString()}</span>
+          </div>
+          {discountPercent > 0 && (
+            <div className="flex justify-between text-red-600">
+              <span>Discount ({discountPercent}%):</span>
+              <span className="font-semibold">-Rs. {discountAmount.toLocaleString()}</span>
+            </div>
+          )}
+          <div className="border-t border-blue-200 pt-2 flex justify-between font-bold">
+            <span>Total Amount:</span>
+            <span className="text-[#d4af37] text-lg">Rs. {total.toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Payment Method Selection */}
+        <div>
+          <h4 className="font-semibold text-[#392d22] mb-3 text-sm uppercase tracking-wider">Payment Method</h4>
+          <div className="space-y-2">
+            <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#392d22] transition-colors"
+              onClick={() => setPaymentMethod('cash')}>
+              <input type="radio" checked={paymentMethod === 'cash'} readOnly className="mr-3" />
+              <span className="font-medium text-sm text-black">Cash Payment</span>
+            </label>
+            <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#392d22] transition-colors"
+              onClick={() => setPaymentMethod('card')}>
+              <input type="radio" checked={paymentMethod === 'card'} readOnly className="mr-3" />
+              <CreditCard size={18} className="text-blue-600 mr-2" />
+              <span className="font-medium text-sm text-black">Card Payment</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Cash Details (if cash selected) */}
+        {paymentMethod === 'cash' && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Cash Received (Rs.)</label>
+              <input
+                type="number"
+                value={cashReceived}
+                onChange={(e) => setCashReceived(e.target.value)}
+                placeholder="Enter cash amount"
+                min={total}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] text-sm text-black"
+              />
+            </div>
+            {cashReceived && (
+              <div className={`p-3 rounded-lg text-sm font-semibold ${
+                parseFloat(cashReceived) >= total
+                  ? 'bg-green-100 text-green-800 border border-green-300'
+                  : 'bg-red-100 text-red-800 border border-red-300'
+              }`}>
+                <div className="flex justify-between">
+                  <span>Change:</span>
+                  <span>Rs. {change.toLocaleString()}</span>
+                </div>
+              </div>
+            )}
+            {cashReceived && parseFloat(cashReceived) < total && (
+              <p className="text-xs text-red-600 font-medium">⚠️ Insufficient amount</p>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setIsPaymentModalOpen(false)}
+            className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handlePaymentComplete}
+            disabled={paymentMethod === 'cash' && isPaymentValid}
+            className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+          >
+            <CheckCircle size={18} />
+            Complete Payment
+          </button>
+        </div>
+      </div>
+    </Modal>
+
+    {/* RECEIPT MODAL */}
+    {isReceiptModalOpen && receipt && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+        >
+          <Receipt
+            receiptNumber={receipt.receiptNumber}
+            customeName={customerName.trim() || 'Customer'}
+            items={receipt.items}
+            subtotal={receipt.subtotal}
+            discount={receipt.discount}
+            discountPercent={receipt.discountPercent}
+            tax={receipt.tax}
+            total={receipt.total}
+            paid={receipt.paid}
+            change={receipt.change}
+            paymentMethod={receipt.paymentMethod}
+            paymentStatus="PAID"
+            cashierName={receipt.cashierName}
+            onClose={() => {
+              setIsReceiptModalOpen(false);
+              clearCart();
+            }}
+            isModal={true}
+          />
+        </motion.div>
+      </div>
+    )}
+  </div>
   );
+
+
 }
