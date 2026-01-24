@@ -42,11 +42,20 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, password, phone, department, position, salary, emergencyContact, emergencyPhone } = body;
+    const { name, email, password, phone, role, department, position, salary, shiftStart, shiftEnd, emergencyContact, emergencyPhone } = body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
+        { success: false, error: 'Missing required fields: name, email, password, role' },
+        { status: 400 }
+      );
+    }
+
+    // Validate role
+    const validRoles = ['SUPER_ADMIN', 'RECEPTIONIST', 'BEAUTICIAN', 'MANAGER', 'STAFF', 'HR'];
+    if (!validRoles.includes(role)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid role' },
         { status: 400 }
       );
     }
@@ -59,7 +68,7 @@ export async function POST(req: NextRequest) {
         email,
         password: hashedPassword,
         phone,
-        role: 'STAFF',
+        role: role as any,
       },
     });
 
@@ -70,6 +79,8 @@ export async function POST(req: NextRequest) {
         department,
         position,
         salary: salary ? parseFloat(salary) : null,
+        shiftStart,
+        shiftEnd,
         emergencyContact,
         emergencyPhone,
       },

@@ -336,15 +336,18 @@ enum MemberType {
 model Employee {
   id              String    @id @default(cuid())
   userId          String    @unique
-  
+
   department      String?
   position        String?
   joinDate        DateTime  @default(now())
   salary          Float?
-  
+
+  shiftStart      String?   // e.g., "09:00"
+  shiftEnd        String?   // e.g., "17:00"
+
   emergencyContact String?
   emergencyPhone  String?
-  
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

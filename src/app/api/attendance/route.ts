@@ -127,24 +127,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { action, customerName, id } = body;
 
-    if (action === 'checkin') {
-      const attendance = await attendanceService.checkIn(customerName);
-      return NextResponse.json({ data: attendance }, { status: 201 });
-    } else if (action === 'checkout' && id) {
-      const attendance = await attendanceService.checkOut(id);
-      return NextResponse.json({ data: attendance });
-    }
-
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to process attendance' },
-      { status: 500 }
-    );
-  }
-}

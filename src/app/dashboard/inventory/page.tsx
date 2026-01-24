@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 
+
 interface Product {
   id: string;
   name: string;
@@ -353,7 +354,7 @@ export default function InventoryPage() {
         {activeTab === 'transactions' && <TransactionsTab />}
 
         {/* Product Modal */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Modal isOpen={isModalOpen} title={editingId ? 'Edit Product' : 'Add Product'} onClose={() => setIsModalOpen(false)}>
           <div className="bg-white p-6 rounded-lg max-w-md w-full space-y-4">
             <h2 className="text-2xl font-bold text-gray-800">
               {editingId ? 'Edit Product' : 'Add Product'}

@@ -10,9 +10,12 @@ interface Employee {
   name: string;
   email: string;
   phone?: string;
+  role: string;
   department?: string;
   position?: string;
   salary?: number;
+  shiftStart?: string;
+  shiftEnd?: string;
   joinDate: string;
   status: 'active' | 'inactive';
 }
@@ -44,9 +47,12 @@ const mockEmployees: Employee[] = [
     name: 'Aisha Khan',
     email: 'aisha@example.com',
     phone: '0300-1234567',
+    role: 'BEAUTICIAN',
     department: 'Beauty Services',
     position: 'Senior Beautician',
     salary: 80000,
+    shiftStart: '09:00',
+    shiftEnd: '17:00',
     joinDate: '2023-01-15',
     status: 'active',
   },
@@ -55,9 +61,12 @@ const mockEmployees: Employee[] = [
     name: 'Fatima Ali',
     email: 'fatima@example.com',
     phone: '0301-2345678',
+    role: 'STAFF',
     department: 'Gym',
     position: 'Fitness Trainer',
     salary: 70000,
+    shiftStart: '08:00',
+    shiftEnd: '16:00',
     joinDate: '2023-03-20',
     status: 'active',
   },
@@ -116,9 +125,12 @@ export default function EmployeeManagementPage() {
         name: formData.name || '',
         email: formData.email || '',
         phone: formData.phone,
+        role: formData.role || 'STAFF',
         department: formData.department,
         position: formData.position,
         salary: formData.salary,
+        shiftStart: formData.shiftStart,
+        shiftEnd: formData.shiftEnd,
         joinDate: formData.joinDate || new Date().toISOString().split('T')[0],
         status: 'active',
       };
@@ -379,43 +391,68 @@ export default function EmployeeManagementPage() {
               placeholder="Full Name"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
             />
             <input
               type="email"
               placeholder="Email"
               value={formData.email || ''}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
             />
             <input
               type="text"
               placeholder="Phone"
               value={formData.phone || ''}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
             />
             <input
               type="text"
               placeholder="Department"
               value={formData.department || ''}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full text-black px-3 py-2 border border-gray-300 rounded"
             />
             <input
               type="text"
               placeholder="Position"
               value={formData.position || ''}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
             />
             <input
               type="number"
               placeholder="Salary"
               value={formData.salary || ''}
               onChange={(e) => setFormData({ ...formData, salary: parseFloat(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
             />
+            <select
+              value={formData.role || 'STAFF'}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-black"
+            >
+              <option value="TRAINER">Trainee</option>
+              <option value="BEAUTICIAN">Beautician</option>
+             
+            </select>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="time"
+                placeholder="Shift Start"
+                value={formData.shiftStart || ''}
+                onChange={(e) => setFormData({ ...formData, shiftStart: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-black"
+              />
+              <input
+                type="time"
+                placeholder="Shift End"
+                value={formData.shiftEnd || ''}
+                onChange={(e) => setFormData({ ...formData, shiftEnd: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-black"
+              />
+            </div>
 
             <div className="flex gap-2">
               <button

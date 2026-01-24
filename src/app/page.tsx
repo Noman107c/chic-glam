@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Trash2, X, CreditCard, DollarSign, ShoppingCart, User, Phone, CheckCircle, LogIn, Printer } from 'lucide-react';
+import { Plus, Minus, Trash2, CreditCard, ShoppingCart, CheckCircle } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Receipt } from '@/components/Receipt';
 
@@ -93,8 +92,7 @@ export default function POSPage() {
   const [cashReceived, setCashReceived] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
   const [receipt, setReceipt] = useState<any>(null);
-  const [isReceiptPreviewOpen, setIsReceiptPreviewOpen] = useState(false);
-  const [previewReceipt, setPreviewReceipt] = useState<any>(null);
+
 
   // Filter products by service type
   const serviceFilteredProducts = mockProducts.filter(p => p.serviceType === selectedServiceType);
@@ -158,105 +156,139 @@ export default function POSPage() {
   const change = cashReceived ? Math.max(0, parseFloat(cashReceived) - total) : 0;
   const isPaymentValid = !cashReceived || parseFloat(cashReceived) < total;
 
-  const handlePaymentComplete = () => {
-    const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+  const handlePaymentComplete = async () => {
+    try {
+      // First, update inventory and record sale
+      const saleData = {
+        customerName: customerName.trim() || 'Walk-in Customer',
+        items: cart.map(item => ({
+          id: item.id.toString(),
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          category: item.category,
+        })),
+        subtotal,
+        discount: discountAmount,
+        total,
+        paymentMethod,
+      };
 
-    setReceipt({
-      receiptNumber,
-      items: cart,
-      subtotal,
-      discount: discountAmount,
-      discountPercent,
-      tax: 0,
-      total,
-      paid: parseFloat(cashReceived) || 0,
-      change,
-      paymentMethod,
-      cashierName: 'Receptionist',
-    });
+      const response = await fetch('/api/sales', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(saleData),
+      });
 
-    setIsPaymentModalOpen(false);
-    setIsReceiptModalOpen(true);
+      if (!response.ok) {
+        throw new Error('Failed to process sale');
+      }
 
-    // Auto-print receipt after payment completion
-    setTimeout(() => {
-      const receiptElement = document.querySelector('.receipt-print-area');
-      if (receiptElement) {
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-          printWindow.document.write(`
-            <html>
-              <head>
-                <title>Receipt - ${receiptNumber}</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-                  .receipt { max-width: 300px; margin: 0 auto; }
-                  .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-                  .item { display: flex; justify-content: space-between; margin: 5px 0; }
-                  .total { border-top: 1px solid #000; padding-top: 10px; font-weight: bold; }
-                  @media print { body { margin: 0; } }
-                </style>
-              </head>
-              <body>
-                <div class="receipt">
-                  <div class="header">
-                    <h2>Chic & Glam</h2>
-                    <p>Premium Beauty & Fitness Services</p>
-                    <p>Receipt: ${receiptNumber}</p>
+      const result = await response.json();
+
+      // Generate receipt number
+      const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+
+      // Print receipt directly
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        const itemsHTML = cart.map(item =>
+          `<div class="item">
+            <span>${item.name} × ${item.quantity}</span>
+            <span>Rs. ${(item.price * item.quantity).toLocaleString()}</span>
+          </div>`
+        ).join('');
+
+        const discountHTML = discountPercent > 0 ? `
+          <div class="item">
+            <span>Discount (${discountPercent}%):</span>
+            <span>-Rs. ${discountAmount.toLocaleString()}</span>
+          </div>` : '';
+
+        const changeHTML = change > 0 ? `
+          <div class="item">
+            <span>Change:</span>
+            <span>Rs. ${change.toLocaleString()}</span>
+          </div>` : '';
+
+        const receiptHTML = `
+          <html>
+            <head>
+              <title>Receipt - ${receiptNumber}</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                .receipt { max-width: 300px; margin: 0 auto; }
+                .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+                .item { display: flex; justify-content: space-between; margin: 5px 0; }
+                .total { border-top: 1px solid #000; padding-top: 10px; font-weight: bold; }
+                @media print { body { margin: 0; } }
+              </style>
+            </head>
+            <body>
+              <div class="receipt">
+                <div class="header">
+                  <h2>Chic & Glam</h2>
+                  <p>Premium Beauty & Fitness Services</p>
+                  <p>Receipt: ${receiptNumber}</p>
+                  <p>Customer: ${customerName.trim() || 'Walk-in Customer'}</p>
+                  <p>Date: ${new Date().toLocaleString()}</p>
+                </div>
+                <div class="items">
+                  ${itemsHTML}
+                </div>
+                <div class="total">
+                  <div class="item">
+                    <span>Subtotal:</span>
+                    <span>Rs. ${subtotal.toLocaleString()}</span>
                   </div>
-                  <div class="items">
-                    ${cart.map(item => `
-                      <div class="item">
-                        <span>${item.name} × ${item.quantity}</span>
-                        <span>Rs. ${(item.price * item.quantity).toLocaleString()}</span>
-                      </div>
-                    `).join('')}
+                  ${discountHTML}
+                  <div class="item">
+                    <span>Total:</span>
+                    <span>Rs. ${total.toLocaleString()}</span>
                   </div>
-                  <div class="total">
-                    <div class="item">
-                      <span>Subtotal:</span>
-                      <span>Rs. ${subtotal.toLocaleString()}</span>
-                    </div>
-                    ${discountPercent > 0 ? `
-                      <div class="item">
-                        <span>Discount (${discountPercent}%):</span>
-                        <span>-Rs. ${discountAmount.toLocaleString()}</span>
-                      </div>
-                    ` : ''}
-                    <div class="item">
-                      <span>Total:</span>
-                      <span>Rs. ${total.toLocaleString()}</span>
-                    </div>
-                    <div class="item">
-                      <span>Paid:</span>
-                      <span>Rs. ${(parseFloat(cashReceived) || 0).toLocaleString()}</span>
-                    </div>
-                    ${change > 0 ? `
-                      <div class="item">
-                        <span>Change:</span>
-                        <span>Rs. ${change.toLocaleString()}</span>
-                      </div>
-                    ` : ''}
+                  <div class="item">
+                    <span>Paid:</span>
+                    <span>Rs. ${(parseFloat(cashReceived) || 0).toLocaleString()}</span>
                   </div>
-                  <div style="text-align: center; margin-top: 20px; font-size: 12px;">
-                    <p>Thank you for your business!</p>
-                    <p>${new Date().toLocaleString()}</p>
+                  ${changeHTML}
+                  <div class="item">
+                    <span>Payment Method:</span>
+                    <span>${paymentMethod === 'cash' ? 'Cash' : 'Card'}</span>
                   </div>
                 </div>
-              </body>
-            </html>
-          `);
-          printWindow.document.close();
-          printWindow.print();
-        }
+                <div style="text-align: center; margin-top: 20px; font-size: 12px;">
+                  <p>Thank you for your business!</p>
+                  <p>© 2023 Chic & Glam</p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `;
+        printWindow.document.write(receiptHTML);
+        printWindow.document.close();
+        printWindow.print();
       }
-    }, 1000); // Delay to ensure receipt modal is rendered
+
+      // Clear cart and close modal
+      clearCart();
+      setIsPaymentModalOpen(false);
+
+      // Show success message
+      alert('Payment completed successfully! Inventory updated and receipt printed.');
+
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      alert('Error processing payment. Please try again.');
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
-      {/* RESPONSIVE PANEL LAYOUT */}
-      <div className="flex flex-col lg:flex-row flex-1">
+    <>
+      <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
+        {/* RESPONSIVE PANEL LAYOUT */}
+        <div className="flex flex-col lg:flex-row flex-1">
         {/* LEFT PANEL - CATEGORIES */}
         <div className="w-full lg:w-1/4 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
           {/* Header */}
@@ -286,7 +318,7 @@ export default function POSPage() {
                 <motion.button
                   onClick={() => {
                     setSelectedServiceType('Gym');
-                    setSelectedCategory('Training'); // Reset to first category
+                    setSelectedCategory('Personal Training'); // Reset to first category
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -436,13 +468,7 @@ export default function POSPage() {
                         <span className="text-base md:text-lg font-bold text-[#d4af37]">Rs. {product.price}</span>
                       </div>
 
-                      {/* Add to Cart Button - Mobile optimized */}
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        className="mt-2 md:mt-3 w-full bg-[#392d22] text-white py-2 rounded text-xs font-medium text-center hover:bg-[#2d2018] transition-colors"
-                      >
-                        + Add
-                      </motion.div>
+             
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -460,14 +486,23 @@ export default function POSPage() {
           </div>
 
           {/* RIGHT PANEL - CART */}
-          <div className="w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm overflow-auto">
+          <div className="w-full lg:w-1/4 bg-white border-l border-gray-200 flex flex-col shadow-sm overflow-auto">
             {/* Desktop Header */}
             <div className="p-4 bg-gradient-to-r from-[#392d22] to-[#2d2018]">
-              <div className="flex items-center gap-2 text-white w-full">
-                <CreditCard size={18} />
-                <h3 className="font-serif text-lg">Bill / Receipt</h3>
+              <div className="flex items-center justify-between text-white w-full">
+                <div className="flex items-center gap-2">
+                  <CreditCard size={18} />
+                  <h3 className="font-serif text-lg">Bill / Receipt</h3>
+                </div>
+                <button
+                  onClick={() => window.location.href = '/auth/login'}
+                  className="px-3 py-1 bg-white text-[#392d22] rounded text-sm font-medium hover:bg-gray-100 transition-colors"
+                >
+                  Login
+                </button>
               </div>
             </div>
+            
 
             {/* Customer Selection */}
             <div className="p-3 lg:p-4 border-b border-gray-200 bg-[#FAF9F6]">
@@ -525,7 +560,7 @@ export default function POSPage() {
                 <div className="space-y-1 text-xs">
                   <div className="flex justify-between">
                     <span className="text-gray-700">Subtotal:</span>
-                    <span className="font-semibold text-[#392d22]">Rs. {subtotal.toLocaleString()}</span>
+                    <span className="font-semibold text-[#392d22] text-black">Rs. {subtotal.toLocaleString()}</span>
                   </div>
 
                   {discountPercent > 0 && (
@@ -538,12 +573,12 @@ export default function POSPage() {
                   <div className="flex items-center gap-2 py-2 px-2 bg-[#FAF9F6] rounded">
                     <span className="text-gray-700 text-xs">Disc %:</span>
                     <input
-                      type="number"
+                      type="boolean"
                       value={discountPercent}
                       onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
                       min="0"
                       max="100"
-                      className="flex-1 bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#392d22]"
+                      className="flex-1 text-black bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#392d22]"
                     />
                   </div>
                 </div>
@@ -557,38 +592,10 @@ export default function POSPage() {
 
                 <div className="space-y-2">
                   <button
-                    onClick={() => {
-                      const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-                      setPreviewReceipt({
-                        receiptNumber,
-                        items: cart,
-                        subtotal,
-                        discount: discountAmount,
-                        discountPercent,
-                        tax: 0,
-                        total,
-                        paid: 0,
-                        change: 0,
-                        paymentMethod: 'PENDING',
-                        cashierName: 'Receptionist',
-                      });
-                      setIsReceiptPreviewOpen(true);
-                    }}
-                    className="w-full bg-blue-600 text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
-                  >
-                    Preview Receipt
-                  </button>
-                  <button
                     onClick={() => setIsPaymentModalOpen(true)}
                     className="w-full bg-[#392d22] text-white py-2 lg:py-3 rounded-lg font-semibold text-sm hover:bg-[#2d2018] transition-colors"
                   >
                     Pay
-                  </button>
-                  <button
-                    onClick={clearCart}
-                    className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition-colors"
-                  >
-                    Clear
                   </button>
                 </div>
               </div>
@@ -735,7 +742,7 @@ export default function POSPage() {
           </button>
           <button
             onClick={handlePaymentComplete}
-            disabled={paymentMethod === 'cash' && isPaymentValid}
+            disabled={paymentMethod === 'cash' && !cashReceived}
             className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
           >
             <CheckCircle size={18} />
@@ -754,31 +761,31 @@ export default function POSPage() {
           exit={{ scale: 0.9, opacity: 0 }}
           className="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
         >
-          <Receipt
-            receiptNumber={receipt.receiptNumber}
-            customeName={customerName.trim() || 'Customer'}
-            items={receipt.items}
-            subtotal={receipt.subtotal}
-            discount={receipt.discount}
-            discountPercent={receipt.discountPercent}
-            tax={receipt.tax}
-            total={receipt.total}
-            paid={receipt.paid}
-            change={receipt.change}
-            paymentMethod={receipt.paymentMethod}
-            paymentStatus="PAID"
-            cashierName={receipt.cashierName}
-            onClose={() => {
-              setIsReceiptModalOpen(false);
-              clearCart();
-            }}
-            isModal={true}
-          />
-        </motion.div>
-      </div>
-    )}
+      <Receipt
+        receiptNumber={receipt.receiptNumber}
+        customerName={customerName.trim() || 'Customer'}
+        items={receipt.items}
+        subtotal={receipt.subtotal}
+        discount={receipt.discount}
+        discountPercent={receipt.discountPercent}
+        tax={receipt.tax}
+        total={receipt.total}
+        paid={receipt.paid}
+        change={receipt.change}
+        paymentMethod={receipt.paymentMethod}
+        paymentStatus="PAID"
+        cashierName={receipt.cashierName}
+        onClose={() => {
+          setIsReceiptModalOpen(false);
+          clearCart();
+        }}
+        isModal={true}
+      />
+    </motion.div>
   </div>
+)}
+
+
+  </>
   );
-
-
 }

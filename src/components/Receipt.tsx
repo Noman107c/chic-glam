@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { Printer, Download, X } from 'lucide-react';
+import { Printer, Download, X, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+
+
 
 interface ReceiptItem {
   name: string;
@@ -14,7 +17,7 @@ interface ReceiptItem {
 
 interface ReceiptProps {
   receiptNumber: string;
-  customeName?: string;
+  customerName?: string;
   customerPhone?: string;
   cashierName?: string;
   items: ReceiptItem[];
@@ -33,7 +36,7 @@ interface ReceiptProps {
 
 export const Receipt = ({
   receiptNumber,
-  customeName = 'Customer',
+  customerName = 'Customer',
   customerPhone,
   cashierName = 'Cashier',
   items,
@@ -93,22 +96,25 @@ export const Receipt = ({
           >
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-[#392d22] to-[#2d2018] text-white p-4 flex justify-between items-center z-10">
-              <h2 className="font-bold text-lg">Receipt</h2>
-              {onClose && (
-                <button
-                  onClick={onClose}
-                  className="hover:bg-white hover:bg-opacity-20 p-2 rounded transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              )}
+              <h3 className="font-serif text-lg">Bill / Receipt</h3>
+              <div className="flex items-center gap-2">
+        
+                {onClose && (
+                  <button
+                    onClick={onClose}
+                    className="hover:bg-white hover:bg-opacity-20 p-2 rounded transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Receipt Content */}
             <div ref={receiptRef} className="p-6 space-y-4 text-sm">
               <ReceiptContent
                 receiptNumber={receiptNumber}
-                customeName={customeName}
+                customerName={customerName}
                 customerPhone={customerPhone}
                 cashierName={cashierName}
                 items={items}
@@ -149,7 +155,7 @@ export const Receipt = ({
           <div ref={receiptRef} className="space-y-4 text-sm">
             <ReceiptContent
               receiptNumber={receiptNumber}
-              customeName={customeName}
+              customerName={customerName}
               customerPhone={customerPhone}
               cashierName={cashierName}
               items={items}
@@ -189,7 +195,7 @@ export const Receipt = ({
 
 interface ReceiptContentProps {
   receiptNumber: string;
-  customeName?: string;
+  customerName?: string;
   customerPhone?: string;
   cashierName?: string;
   items: ReceiptItem[];
@@ -206,7 +212,7 @@ interface ReceiptContentProps {
 
 const ReceiptContent = ({
   receiptNumber,
-  customeName,
+  customerName,
   customerPhone,
   cashierName,
   items,
@@ -244,7 +250,7 @@ const ReceiptContent = ({
 
       {/* Customer & Cashier Info */}
       <div className="text-xs border-b border-gray-200 pb-2">
-        <p className="text-gray-600">Customer: {customeName || 'Customer'}</p>
+        <p className="text-gray-600">Customer: {customerName || 'Customer'}</p>
         {customerPhone && <p className="text-gray-600">Phone: {customerPhone}</p>}
         <p className="text-gray-600">Cashier: {cashierName || 'Cashier'}</p>
       </div>

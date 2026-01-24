@@ -368,8 +368,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '1',
     user_id: '1',
-    check_in_time: new Date().toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(8, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Early check-in at 8:30 AM
+    check_out_time: new Date(new Date().setHours(18, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-out at 6:30 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -382,7 +382,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '2',
     user_id: '2',
-    check_in_time: new Date().toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(7, 45, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Very early check-in at 7:45 AM
+    check_out_time: new Date(new Date().setHours(19, 15, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Very late check-out at 7:15 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -395,8 +396,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '3',
     user_id: '3',
-    check_in_time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(8, 15, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Early check-in at 8:15 AM
+    check_out_time: new Date(new Date().setHours(17, 45, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-out at 5:45 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -409,8 +410,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '4',
     user_id: '4',
-    check_in_time: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(9, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-in at 9:30 AM
+    check_out_time: new Date(new Date().setHours(16, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Early check-out at 4:30 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -423,8 +424,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '5',
     user_id: '5',
-    check_in_time: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(8, 0, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Early check-in at 8:00 AM
+    check_out_time: new Date(new Date().setHours(18, 0, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-out at 6:00 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -437,8 +438,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '6',
     user_id: '6',
-    check_in_time: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(9, 15, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-in at 9:15 AM
+    check_out_time: new Date(new Date().setHours(17, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // On-time check-out at 5:30 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -451,8 +452,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '7',
     user_id: '7',
-    check_in_time: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(7, 30, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Very early check-in at 7:30 AM
+    check_out_time: new Date(new Date().setHours(19, 0, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Very late check-out at 7:00 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),
@@ -465,8 +466,8 @@ export const mockAttendanceRecords: AttendanceRecord[] = [
   {
     id: '8',
     user_id: '8',
-    check_in_time: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
-    check_out_time: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, -5),
+    check_in_time: new Date(new Date().setHours(8, 45, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Early check-in at 8:45 AM
+    check_out_time: new Date(new Date().setHours(18, 45, 0, 0)).toISOString().replace('T', ' ').slice(0, -5), // Late check-out at 6:45 PM
     location_lat: 24.8607,
     location_lng: 67.0011,
     created_at: new Date().toISOString(),

@@ -1,1 +1,4 @@
-jab payment done ho jaye gi tou reciept print krwao with proper ui and 3no panel resize bhi hongy drag krke and sare error fix karo
+- [x] Import useRouter from 'next/navigation' and LogIn from 'lucide-react'
+- [x] Add router = useRouter() inside the Receipt component
+- [x] Change the header title from h2 to h3 with "Bill / Receipt" and font-serif text-lg class
+- [x] Add login button with LogIn icon and onClick to redirect to /auth/login
