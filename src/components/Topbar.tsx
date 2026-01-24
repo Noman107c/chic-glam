@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   Bell,
@@ -10,6 +10,12 @@ import {
   Settings,
   Moon,
   Sun,
+  X,
+  Calendar,
+  CreditCard,
+  AlertCircle,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
 import { useTheme } from "@/hooks";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +28,59 @@ interface TopbarProps {
   isSidebarOpen?: boolean;
 }
 
+const notifications = [
+  {
+    id: 1,
+    type: "booking",
+    title: "New Booking",
+    message: "Sarah K. booked 'Bridal Makeup' for Jan 28",
+    time: "2 mins ago",
+    read: false,
+    icon: Calendar,
+    color: "purple",
+  },
+  {
+    id: 2,
+    type: "payment",
+    title: "Payment Received",
+    message: "Emily R. paid $120 for Hydra Facial",
+    time: "15 mins ago",
+    read: false,
+    icon: CreditCard,
+    color: "green",
+  },
+  {
+    id: 3,
+    type: "alert",
+    title: "Low Stock Alert",
+    message: "Facial Kit stock is running low (5 items left)",
+    time: "1 hour ago",
+    read: false,
+    icon: AlertCircle,
+    color: "orange",
+  },
+  {
+    id: 4,
+    type: "success",
+    title: "Service Completed",
+    message: "John D.'s appointment completed successfully",
+    time: "2 hours ago",
+    read: true,
+    icon: CheckCircle,
+    color: "blue",
+  },
+  {
+    id: 5,
+    type: "booking",
+    title: "Appointment Reminder",
+    message: "Michael B. has an appointment in 30 minutes",
+    time: "3 hours ago",
+    read: true,
+    icon: Clock,
+    color: "purple",
+  },
+];
+
 export const Topbar: React.FC<TopbarProps> = ({
   onMenuClick,
   title = "Dashboard",
@@ -31,14 +90,30 @@ export const Topbar: React.FC<TopbarProps> = ({
 }) => {
   const { theme, toggleTheme } = useTheme();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notificationList, setNotificationList] = useState(notifications);
 
-  const onLogout = () => {
-    if (handleLogout) {
-      handleLogout();
-    } else {
-      console.log("Logout clicked");
-    }
+  const markAllAsRead = () => {
+    setNotificationList(
+      notificationList.map((notif) => ({ ...notif, read: true })),
+    );
   };
+
+  const unreadCount = notificationList.filter((n) => !n.read).length;
+
+  // Prevent body scroll when notification panel is open
+  useEffect(() => {
+    if (showNotifications) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showNotifications]);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
@@ -66,12 +141,143 @@ export const Topbar: React.FC<TopbarProps> = ({
           </div>
 
           {/* Notifications */}
-          <button className="relative p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group">
-            <Bell className="h-5 w-5 text-gray-600 group-hover:text-[#392d22] transition-colors" />
-            <span className="absolute top-1 right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-sm">
-              23
-            </span>
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+            >
+              <Bell className="h-5 w-5 text-gray-600 group-hover:text-[#392d22] transition-colors" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-sm">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown Panel */}
+            {showNotifications && (
+              <>
+                {/* Invisible Backdrop - prevents scroll issues */}
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowNotifications(false)}
+                  style={{ backgroundColor: "transparent" }}
+                ></div>
+
+                {/* Panel */}
+                <div className="absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                  {/* Header */}
+                  <div className="px-5 py-4 bg-gradient-to-br from-[#FAF9F6] to-white border-b border-gray-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <Bell className="h-5 w-5 text-[#392d22]" />
+                        Notifications
+                      </h3>
+                      <button
+                        onClick={() => setShowNotifications(false)}
+                        className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        <X className="h-4 w-4 text-gray-500" />
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-gray-500">
+                        {unreadCount} unread notification
+                        {unreadCount !== 1 ? "s" : ""}
+                      </p>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={markAllAsRead}
+                          className="text-xs font-semibold text-[#392d22] hover:text-[#2a2119] transition-colors"
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Notifications List */}
+                  <div className="max-h-[28rem] overflow-y-auto">
+                    {notificationList.length === 0 ? (
+                      <div className="text-center py-16 px-4">
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                          <Bell className="h-8 w-8 text-gray-300" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-900 mb-1">
+                          No notifications yet
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          We'll notify you when something arrives!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-gray-50">
+                        {notificationList.map((notification) => {
+                          const Icon = notification.icon;
+                          const colorClasses = {
+                            purple:
+                              "bg-purple-50 text-purple-600 border-purple-100",
+                            green:
+                              "bg-green-50 text-green-600 border-green-100",
+                            orange:
+                              "bg-orange-50 text-orange-600 border-orange-100",
+                            blue: "bg-blue-50 text-blue-600 border-blue-100",
+                          };
+
+                          return (
+                            <div
+                              key={notification.id}
+                              className={`px-4 py-3 transition-all hover:bg-gray-50 cursor-pointer relative ${
+                                !notification.read ? "bg-blue-50/30" : ""
+                              }`}
+                            >
+                              <div className="flex gap-3">
+                                <div
+                                  className={`mt-0.5 p-2.5 rounded-xl shrink-0 border ${
+                                    colorClasses[
+                                      notification.color as keyof typeof colorClasses
+                                    ]
+                                  }`}
+                                >
+                                  <Icon className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-2 mb-1">
+                                    <h4 className="text-sm font-semibold text-gray-900 leading-tight">
+                                      {notification.title}
+                                    </h4>
+                                    {!notification.read && (
+                                      <span className="w-2 h-2 bg-blue-500 rounded-full shrink-0 mt-1"></span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-600 leading-relaxed mb-2">
+                                    {notification.message}
+                                  </p>
+                                  <div className="flex items-center gap-1 text-[10px] text-gray-400">
+                                    <Clock size={10} />
+                                    <span>{notification.time}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  {notificationList.length > 0 && (
+                    <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 text-center">
+                      <button className="text-xs font-semibold text-[#392d22] hover:text-[#2a2119] transition-colors">
+                        View all notifications
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Divider */}
           <div className="hidden sm:block h-8 w-px bg-gray-200"></div>
@@ -128,7 +334,11 @@ export const Topbar: React.FC<TopbarProps> = ({
                   </button>
                   <div className="my-1 h-px bg-gray-200"></div>
                   <button
-                    onClick={onLogout}
+                    onClick={() => {
+                      if (handleLogout) {
+                        handleLogout();
+                      }
+                    }}
                     className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50">
