@@ -52,44 +52,55 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const pathname = usePathname();
 
   return (
-    <aside
-      className={`
-        ${isOpen ? "w-64" : "w-20"} bg-white text-[#392d22] transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-100
-      `}
-    >
-      {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4">
-        <Link href="/dashboard" className="flex items-center">
-          <div className="flex items-center justify-center">
-            <img
-              src="/chic-logo.jpg"
-              alt="Chic Glam Logo"
-              className={`object-contain transition-all duration-300 ${
-                isOpen ? "h-12 w-auto" : "h-10 w-10"
-              }`}
-            />
-          </div>
-        </Link>
-        <button
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"
           onClick={onToggle}
-          className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-4 py-6">
-        <ul className="space-y-2">
-          {MENU_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 md:relative md:translate-x-0 transition-all duration-300 ease-in-out
+          ${isOpen ? "translate-x-0 w-64" : "-translate-x-full w-64 md:translate-x-0 md:w-20"} 
+          bg-white text-[#392d22] flex flex-col overflow-hidden border-r border-gray-100
+        `}
+      >
+        {/* Logo */}
+        <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4">
+          <Link href="/dashboard" className="flex items-center">
+            <div className="flex items-center justify-center">
+              <img
+                src="/chic-logo.jpg"
+                alt="Chic Glam Logo"
+                className={`object-contain transition-all duration-300 ${
+                  isOpen ? "h-12 w-auto" : "h-10 w-10"
+                }`}
+              />
+            </div>
+          </Link>
+          <button
+            onClick={onToggle}
+            className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
 
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-4 py-6">
+          <ul className="space-y-2">
+            {MENU_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`
                     flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors
                     ${
                       isActive
@@ -97,27 +108,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : "text-gray-600 hover:bg-[#FAF9F6] hover:text-[#392d22]"
                     }
                   `}
-                >
-                  <Icon className="h-5 w-5" />
-                  {isOpen && item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+                  >
+                    <Icon className="h-5 w-5" />
+                    {isOpen && item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-100 space-y-2">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 hover:text-red-700 font-light"
-          title={!isOpen ? "Logout" : ""}
-        >
-          <LogOut size={20} />
-          {isOpen && <span className="text-sm font-medium">Logout</span>}
-        </button>
-      </div>
-    </aside>
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-100 space-y-2">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 hover:text-red-700 font-light"
+            title={!isOpen ? "Logout" : ""}
+          >
+            <LogOut size={20} />
+            {isOpen && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };

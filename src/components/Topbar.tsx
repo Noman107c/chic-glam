@@ -120,6 +120,13 @@ export const Topbar: React.FC<TopbarProps> = ({
       <div className="flex items-center justify-between px-4 h-16 md:px-6">
         {/* Left Section */}
         <div className="flex items-center gap-4">
+          <button
+            onClick={onMenuClick}
+            className="p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100 md:hidden"
+            aria-label="Toggle Menu"
+          >
+            <Menu size={20} />
+          </button>
           <div className="hidden md:block">
             <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
             {subtitle && <p className="text-sm text-gray-600 ">{subtitle}</p>}

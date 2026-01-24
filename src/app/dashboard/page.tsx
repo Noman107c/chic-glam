@@ -172,12 +172,12 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-1 md:mb-2">
             Welcome back{user?.name}!
           </h1>
-          <p className="text-gray-700">
+          <p className="text-sm md:text-base text-gray-700">
             {role === "super_admin"
               ? "Super Admin Dashboard"
               : role === "beautician"

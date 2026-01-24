@@ -208,14 +208,14 @@ export default function RolesPage() {
         <>
           {/* Page Header */}
           <div className="bg-gradient-to-r from-white to-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                   <span>Dashboard</span>
                   <span>/</span>
                   <span className="text-gray-900 font-medium">User Roles</span>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
                   User Roles
                 </h1>
                 <p className="text-sm text-gray-600">

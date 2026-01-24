@@ -345,7 +345,7 @@ export default function ServicesPage() {
 
       {/* Filters & Search */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex p-1 bg-gray-100 rounded-lg">
+        <div className="flex p-1 bg-gray-100 rounded-lg overflow-x-auto scrollbar-hide max-w-full">
           {(["all", "salon", "gym"] as const).map((tab) => (
             <button
               key={tab}
