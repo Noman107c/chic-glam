@@ -19,6 +19,7 @@ import {
   X,
   Menu,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -32,6 +33,7 @@ const MENU_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
 
   { label: "Salon Supplies", href: "/dashboard/stock", icon: Scissors },
+  { label: "Service Catalog", href: "/dashboard/services", icon: Sparkles },
   { label: "Employees", href: "/dashboard/employees", icon: UserCheck },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { label: "Attendance", href: "/dashboard/attendance", icon: Clock },
