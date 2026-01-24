@@ -1,20 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Plus,
   Trash2,
   Edit2,
   Search,
   AlertTriangle,
-  TrendingDown,
   Package,
   DollarSign,
-  Download,
-} from 'lucide-react';
-import { Modal } from '@/components/ui/Modal';
-
+} from "lucide-react";
+import { Modal } from "@/components/ui/Modal";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 interface Product {
   id: string;
@@ -24,13 +23,13 @@ interface Product {
   minStock: number;
   price: number;
   lastUpdated: string;
-  status: 'in-stock' | 'low-stock' | 'out-of-stock';
+  status: "in-stock" | "low-stock" | "out-of-stock";
 }
 
 interface InventoryTransaction {
   id: string;
   productName: string;
-  type: 'ADD' | 'USE' | 'RETURN';
+  type: "ADD" | "USE" | "RETURN";
   quantity: number;
   reason?: string;
   date: string;
@@ -38,61 +37,64 @@ interface InventoryTransaction {
 
 const mockProducts: Product[] = [
   {
-    id: '1',
-    name: 'Facial Cleanser',
-    category: 'Skincare',
+    id: "1",
+    name: "Facial Cleanser",
+    category: "Skincare",
     quantity: 45,
     minStock: 20,
     price: 1500,
-    lastUpdated: '2024-01-24',
-    status: 'in-stock',
+    lastUpdated: "2024-01-24",
+    status: "in-stock",
   },
   {
-    id: '2',
-    name: 'Hair Oil',
-    category: 'Hair Care',
+    id: "2",
+    name: "Hair Oil",
+    category: "Hair Care",
     quantity: 12,
     minStock: 20,
     price: 800,
-    lastUpdated: '2024-01-24',
-    status: 'low-stock',
+    lastUpdated: "2024-01-24",
+    status: "low-stock",
   },
   {
-    id: '3',
-    name: 'Face Mask',
-    category: 'Skincare',
+    id: "3",
+    name: "Face Mask",
+    category: "Skincare",
     quantity: 0,
     minStock: 15,
     price: 2000,
-    lastUpdated: '2024-01-23',
-    status: 'out-of-stock',
+    lastUpdated: "2024-01-23",
+    status: "out-of-stock",
   },
 ];
 
 const mockTransactions: InventoryTransaction[] = [
   {
-    id: '1',
-    productName: 'Facial Cleanser',
-    type: 'USE',
+    id: "1",
+    productName: "Facial Cleanser",
+    type: "USE",
     quantity: 5,
-    reason: 'Facial service session',
-    date: '2024-01-24',
+    reason: "Facial service session",
+    date: "2024-01-24",
   },
   {
-    id: '2',
-    productName: 'Hair Oil',
-    type: 'ADD',
+    id: "2",
+    productName: "Hair Oil",
+    type: "ADD",
     quantity: 20,
-    reason: 'Purchase order',
-    date: '2024-01-24',
+    reason: "Purchase order",
+    date: "2024-01-24",
   },
 ];
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>(mockProducts);
-  const [transactions, setTransactions] = useState<InventoryTransaction[]>(mockTransactions);
-  const [activeTab, setActiveTab] = useState<'inventory' | 'transactions'>('inventory');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [transactions, setTransactions] =
+    useState<InventoryTransaction[]>(mockTransactions);
+  const [activeTab, setActiveTab] = useState<"inventory" | "transactions">(
+    "inventory",
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({});
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -101,21 +103,23 @@ export default function InventoryPage() {
   const filteredProducts = products.filter(
     (prod) =>
       prod.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prod.category.toLowerCase().includes(searchQuery.toLowerCase())
+      prod.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Calculate stats
   const stats = {
     totalProducts: products.length,
-    lowStockItems: products.filter((p) => p.status === 'low-stock' || p.status === 'out-of-stock').length,
+    lowStockItems: products.filter(
+      (p) => p.status === "low-stock" || p.status === "out-of-stock",
+    ).length,
     totalValue: products.reduce((sum, p) => sum + p.quantity * p.price, 0),
   };
 
   // Update product status
   const getProductStatus = (quantity: number, minStock: number) => {
-    if (quantity === 0) return 'out-of-stock' as const;
-    if (quantity <= minStock) return 'low-stock' as const;
-    return 'in-stock' as const;
+    if (quantity === 0) return "out-of-stock" as const;
+    if (quantity <= minStock) return "low-stock" as const;
+    return "in-stock" as const;
   };
 
   // Save product
@@ -127,23 +131,29 @@ export default function InventoryPage() {
             ? {
                 ...prod,
                 ...formData,
-                status: getProductStatus(formData.quantity || prod.quantity, formData.minStock || prod.minStock),
-                lastUpdated: new Date().toISOString().split('T')[0],
+                status: getProductStatus(
+                  formData.quantity || prod.quantity,
+                  formData.minStock || prod.minStock,
+                ),
+                lastUpdated: new Date().toISOString().split("T")[0],
               }
-            : prod
-        )
+            : prod,
+        ),
       );
       setEditingId(null);
     } else {
       const newProduct: Product = {
         id: Math.random().toString(),
-        name: formData.name || '',
-        category: formData.category || '',
+        name: formData.name || "",
+        category: formData.category || "",
         quantity: formData.quantity || 0,
         minStock: formData.minStock || 10,
         price: formData.price || 0,
-        lastUpdated: new Date().toISOString().split('T')[0],
-        status: getProductStatus(formData.quantity || 0, formData.minStock || 10),
+        lastUpdated: new Date().toISOString().split("T")[0],
+        status: getProductStatus(
+          formData.quantity || 0,
+          formData.minStock || 10,
+        ),
       };
       setProducts([...products, newProduct]);
     }
@@ -153,77 +163,118 @@ export default function InventoryPage() {
 
   // Delete product
   const handleDeleteProduct = (id: string) => {
-    if (confirm('Are you sure?')) {
+    if (confirm("Are you sure you want to delete this product?")) {
       setProducts(products.filter((prod) => prod.id !== id));
     }
   };
 
   // Inventory Tab
   const InventoryTab = () => (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {[
-          { label: 'Total Products', value: stats.totalProducts, icon: Package, color: 'blue' },
-          {
-            label: 'Low Stock Items',
-            value: stats.lowStockItems,
-            icon: AlertTriangle,
-            color: 'red',
-          },
-          { label: 'Total Value', value: `Rs ${stats.totalValue.toLocaleString()}`, icon: DollarSign, color: 'green' },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100 p-6 rounded-lg border border-${stat.color}-200 flex items-start justify-between`}
-          >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border-2 border-blue-200 shadow-sm">
+          <div className="flex items-start justify-between">
             <div>
-              <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
+              <div className="text-3xl font-bold text-gray-900">
+                {stats.totalProducts}
+              </div>
+              <div className="text-sm font-medium text-gray-700 mt-1">
+                Total Products
+              </div>
             </div>
-            <stat.icon className={`text-${stat.color}-600`} size={32} />
+            <Package className="text-blue-600" size={32} />
           </div>
-        ))}
+        </div>
+
+        <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border-2 border-red-200 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-3xl font-bold text-gray-900">
+                {stats.lowStockItems}
+              </div>
+              <div className="text-sm font-medium text-gray-700 mt-1">
+                Low Stock Items
+              </div>
+            </div>
+            <AlertTriangle className="text-red-600" size={32} />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border-2 border-green-200 shadow-sm sm:col-span-2 lg:col-span-1">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-3xl font-bold text-gray-900">
+                Rs {stats.totalValue.toLocaleString()}
+              </div>
+              <div className="text-sm font-medium text-gray-700 mt-1">
+                Total Value
+              </div>
+            </div>
+            <DollarSign className="text-green-600" size={32} />
+          </div>
+        </div>
       </div>
 
       {/* Search and Add */}
-      <div className="flex gap-3 flex-col md:flex-row">
+      <div className="flex gap-3 flex-col sm:flex-row">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={18}
+          />
           <input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+            className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] focus:border-transparent text-gray-900"
           />
         </div>
-        <button
+        <Button
           onClick={() => {
             setFormData({});
             setEditingId(null);
             setIsModalOpen(true);
           }}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-purple-700"
+          style={{
+            backgroundColor: "#392d22",
+            color: "white",
+          }}
+          className="hover:opacity-90 transition-opacity font-medium px-5 py-2.5 shadow-md whitespace-nowrap"
         >
-          <Plus size={18} />
+          <Plus size={18} className="inline mr-2" />
           Add Product
-        </button>
+        </Button>
       </div>
 
       {/* Products Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Product</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Quantity</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Min Stock</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Price</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Product
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Category
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Quantity
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Min Stock
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Price
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Status
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -232,49 +283,70 @@ export default function InventoryPage() {
                   key={product.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="border-b border-gray-200 hover:bg-gray-50"
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-sm font-medium text-gray-800">{product.name}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{product.category}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-800">{product.quantity}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{product.minStock}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">Rs {product.price}</td>
-                  <td className="px-4 py-3 text-sm">
+                  <td className="px-4 py-4 text-sm font-semibold text-gray-900">
+                    {product.name}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium text-gray-700">
+                    {product.category}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-bold text-gray-900">
+                    {product.quantity}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium text-gray-700">
+                    {product.minStock}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-semibold text-gray-900">
+                    Rs {product.price.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-4 text-sm">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        product.status === 'in-stock'
-                          ? 'bg-green-100 text-green-800'
-                          : product.status === 'low-stock'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+                        product.status === "in-stock"
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : product.status === "low-stock"
+                            ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                            : "bg-red-100 text-red-800 border border-red-200"
                       }`}
                     >
-                      {product.status.replace('-', ' ').toUpperCase()}
+                      {product.status.replace("-", " ").toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm flex gap-2">
-                    <button
-                      onClick={() => {
-                        setFormData(product);
-                        setEditingId(product.id);
-                        setIsModalOpen(true);
-                      }}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <td className="px-4 py-4 text-sm">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setFormData(product);
+                          setEditingId(product.id);
+                          setIsModalOpen(true);
+                        }}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <Package size={48} className="mx-auto mb-3 opacity-30" />
+            <p className="font-medium">No products found</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -282,38 +354,59 @@ export default function InventoryPage() {
   // Transactions Tab
   const TransactionsTab = () => (
     <div className="space-y-4">
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Product</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Quantity</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Reason</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Product
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Type
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Quantity
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Reason
+                </th>
+                <th className="px-4 py-4 text-left text-sm font-bold text-gray-900">
+                  Date
+                </th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((trans) => (
-                <tr key={trans.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-medium">{trans.productName}</td>
-                  <td className="px-4 py-3 text-sm">
+                <tr
+                  key={trans.id}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                >
+                  <td className="px-4 py-4 text-sm font-semibold text-gray-900">
+                    {trans.productName}
+                  </td>
+                  <td className="px-4 py-4 text-sm">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        trans.type === 'ADD'
-                          ? 'bg-green-100 text-green-800'
-                          : trans.type === 'USE'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-blue-100 text-blue-800'
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+                        trans.type === "ADD"
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : trans.type === "USE"
+                            ? "bg-red-100 text-red-800 border border-red-200"
+                            : "bg-blue-100 text-blue-800 border border-blue-200"
                       }`}
                     >
                       {trans.type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium">{trans.quantity}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{trans.reason || '-'}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{trans.date}</td>
+                  <td className="px-4 py-4 text-sm font-bold text-gray-900">
+                    {trans.quantity}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium text-gray-700">
+                    {trans.reason || "-"}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium text-gray-700">
+                    {trans.date}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -324,95 +417,153 @@ export default function InventoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Inventory Management</h1>
-          <p className="text-gray-600">Track products, stock levels, and inventory transactions</p>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-4 mb-6 border-b border-gray-200">
-          {(['inventory', 'transactions'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-3 font-semibold capitalize border-b-2 transition ${
-                activeTab === tab
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        {activeTab === 'inventory' && <InventoryTab />}
-        {activeTab === 'transactions' && <TransactionsTab />}
-
-        {/* Product Modal */}
-        <Modal isOpen={isModalOpen} title={editingId ? 'Edit Product' : 'Add Product'} onClose={() => setIsModalOpen(false)}>
-          <div className="bg-white p-6 rounded-lg max-w-md w-full space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800">
-              {editingId ? 'Edit Product' : 'Add Product'}
-            </h2>
-
-            <input
-              type="text"
-              placeholder="Product Name"
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              value={formData.category || ''}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={formData.quantity || ''}
-              onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="number"
-              placeholder="Min Stock Level"
-              value={formData.minStock || ''}
-              onChange={(e) => setFormData({ ...formData, minStock: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="number"
-              placeholder="Price (Rs)"
-              value={formData.price || ''}
-              onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 bg-gray-300 text-gray-800 py-2 rounded font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveProduct}
-                className="flex-1 bg-purple-600 text-white py-2 rounded font-semibold hover:bg-purple-700"
-              >
-                Save
-              </button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-white to-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+              <span>Dashboard</span>
+              <span>/</span>
+              <span className="text-gray-900 font-medium">Inventory</span>
             </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              Inventory Management
+            </h1>
+            <p className="text-sm text-gray-600">
+              Track products, stock levels, and inventory transactions
+            </p>
           </div>
-        </Modal>
+        </div>
       </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 sm:gap-4 border-b-2 border-gray-200 overflow-x-auto">
+        {(["inventory", "transactions"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 sm:px-6 py-3 font-semibold capitalize border-b-2 transition whitespace-nowrap ${
+              activeTab === tab
+                ? "border-[#392d22] text-[#392d22]"
+                : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "inventory" && <InventoryTab />}
+      {activeTab === "transactions" && <TransactionsTab />}
+
+      {/* Product Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        title={editingId ? "Edit Product" : "Add Product"}
+        onClose={() => {
+          setIsModalOpen(false);
+          setFormData({});
+          setEditingId(null);
+        }}
+        footer={
+          <div className="flex gap-3 w-full">
+            <Button
+              onClick={() => {
+                setIsModalOpen(false);
+                setFormData({});
+                setEditingId(null);
+              }}
+              style={{
+                backgroundColor: "white",
+                color: "#392d22",
+                border: "2px solid #392d22",
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveProduct}
+              style={{
+                backgroundColor: "#392d22",
+                color: "white",
+              }}
+              className="flex-1"
+            >
+              {editingId ? "Update" : "Save"}
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Product Name"
+              type="text"
+              placeholder="e.g., Facial Cleanser"
+              value={formData.name || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              required
+            />
+            <Input
+              label="Category"
+              type="text"
+              placeholder="e.g., Skincare"
+              value={formData.category || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Input
+              label="Quantity"
+              type="number"
+              placeholder="0"
+              value={formData.quantity || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  quantity: parseInt(e.target.value) || 0,
+                })
+              }
+              required
+            />
+            <Input
+              label="Min Stock"
+              type="number"
+              placeholder="10"
+              value={formData.minStock || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  minStock: parseInt(e.target.value) || 0,
+                })
+              }
+              required
+            />
+            <Input
+              label="Price (Rs)"
+              type="number"
+              placeholder="0"
+              value={formData.price || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  price: parseFloat(e.target.value) || 0,
+                })
+              }
+              required
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
