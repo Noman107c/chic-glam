@@ -43,7 +43,7 @@ interface Employee {
   baseSalary: number;
   bonus: number;
   deductions: number;
-  status: "Paid" | "Pending" | "Processing";
+  status: "Paid" | "Unpaid";
   lastPaid: string;
 }
 
@@ -65,7 +65,8 @@ const mockEmployees: Employee[] = [
     baseSalary: 85000,
     bonus: 5000,
     deductions: 0,
-    status: "Pending",
+
+    status: "Unpaid",
     lastPaid: "2023-12-31",
   },
   {
@@ -87,7 +88,7 @@ const mockEmployees: Employee[] = [
     baseSalary: 75000,
     bonus: 3000,
     deductions: 1500,
-    status: "Pending",
+    status: "Unpaid",
     lastPaid: "2023-12-31",
   },
   {
@@ -98,7 +99,7 @@ const mockEmployees: Employee[] = [
     baseSalary: 95000,
     bonus: 0,
     deductions: 0,
-    status: "Processing",
+    status: "Unpaid",
     lastPaid: "2023-12-31",
   },
   {
@@ -161,7 +162,7 @@ export default function PayrollPage() {
   >("overview");
   const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"All" | "Paid" | "Pending">(
+  const [filterStatus, setFilterStatus] = useState<"All" | "Paid" | "Unpaid">(
     "All",
   );
   const [showFilterMenu, setShowFilterMenu] = useState(false);
@@ -177,19 +178,36 @@ export default function PayrollPage() {
     baseSalary: 0,
     bonus: 0,
     deductions: 0,
-    status: "Pending",
+
+    status: "Unpaid",
   });
 
-  // Stats
+  //Stats
   const totalPayroll = employees.reduce(
     (sum, emp) => sum + emp.baseSalary + emp.bonus - emp.deductions,
     0,
   );
   const pendingAmount = employees
-    .filter((emp) => emp.status === "Pending")
+    .filter((emp) => emp.status === "Unpaid")
     .reduce((sum, emp) => sum + emp.baseSalary + emp.bonus - emp.deductions, 0);
   const paidCount = employees.filter((emp) => emp.status === "Paid").length;
 
+  const handleStatusChange = (id: string, newStatus: "Paid" | "Unpaid") => {
+    setEmployees(
+      employees.map((emp) =>
+        emp.id === id
+          ? {
+              ...emp,
+              status: newStatus,
+              lastPaid:
+                newStatus === "Paid"
+                  ? new Date().toISOString().split("T")[0]
+                  : emp.lastPaid,
+            }
+          : emp,
+      ),
+    );
+  };
   const handleAddStaff = () => {
     if (
       newEmployeeData.name &&
@@ -204,7 +222,8 @@ export default function PayrollPage() {
         baseSalary: Number(newEmployeeData.baseSalary),
         bonus: Number(newEmployeeData.bonus) || 0,
         deductions: Number(newEmployeeData.deductions) || 0,
-        status: "Pending",
+
+        status: "Unpaid",
         lastPaid: "-",
       };
       setEmployees([...employees, newEmployee]);
@@ -216,7 +235,8 @@ export default function PayrollPage() {
         baseSalary: 0,
         bonus: 0,
         deductions: 0,
-        status: "Pending",
+
+        status: "Unpaid",
       });
     } else {
       alert("Please fill in Name, Role and Base Salary");
@@ -410,7 +430,7 @@ export default function PayrollPage() {
 
           {showFilterMenu && (
             <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10">
-              {["All", "Paid", "Pending"].map((status) => (
+              {["All", "Paid", "Unpaid"].map((status) => (
                 <button
                   key={status}
                   onClick={() => {
@@ -517,31 +537,26 @@ export default function PayrollPage() {
                         Rs {netSalary.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                          ${
-                            emp.status === "Paid"
-                              ? "bg-green-100 text-green-800"
-                              : emp.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-blue-100 text-blue-800"
-                          }`}
+                        <select
+                          value={emp.status}
+                          onChange={(e) =>
+                            handleStatusChange(
+                              emp.id,
+                              e.target.value as "Paid" | "Unpaid",
+                            )
+                          }
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border-0 cursor-pointer focus:ring-2 focus:ring-purple-500 outline-none
+                             ${
+                               emp.status === "Paid"
+                                 ? "bg-green-100 text-green-800"
+                                 : "bg-red-100 text-red-800"
+                             }`}
                         >
-                          {emp.status}
-                        </span>
+                          <option value="Unpaid">Unpaid</option>
+                          <option value="Paid">Paid</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {emp.status !== "Paid" && (
-                          <button
-                            onClick={() => {
-                              setSelectedEmployee(emp);
-                              setIsProcessModalOpen(true);
-                            }}
-                            className="text-purple-600 hover:text-purple-900 font-medium"
-                          >
-                            Process
-                          </button>
-                        )}
                         {emp.status === "Paid" && (
                           <button className="text-gray-400 hover:text-gray-600">
                             <FileText size={18} />
@@ -586,18 +601,24 @@ export default function PayrollPage() {
                       <div className="text-xs text-gray-500">{emp.role}</div>
                     </div>
                   </div>
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full 
-                          ${
-                            emp.status === "Paid"
-                              ? "bg-green-100 text-green-800"
-                              : emp.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-blue-100 text-blue-800"
-                          }`}
+                  <select
+                    value={emp.status}
+                    onChange={(e) =>
+                      handleStatusChange(
+                        emp.id,
+                        e.target.value as "Paid" | "Unpaid",
+                      )
+                    }
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border-0 cursor-pointer focus:ring-2 focus:ring-purple-500 outline-none
+                             ${
+                               emp.status === "Paid"
+                                 ? "bg-green-100 text-green-800"
+                                 : "bg-red-100 text-red-800"
+                             }`}
                   >
-                    {emp.status}
-                  </span>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm border-t border-gray-50 pt-3">
@@ -609,26 +630,13 @@ export default function PayrollPage() {
                   </div>
                   <div>
                     <span className="text-gray-500 block text-xs">
-                      Net Salary
+                      Net Salary (Auto)
                     </span>
                     <span className="font-bold text-gray-900">
                       Rs {netSalary.toLocaleString()}
                     </span>
                   </div>
                 </div>
-
-                {emp.status !== "Paid" && (
-                  <Button
-                    onClick={() => {
-                      setSelectedEmployee(emp);
-                      setIsProcessModalOpen(true);
-                    }}
-                    className="w-full mt-2 bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200"
-                    variant="outline"
-                  >
-                    Process Payment
-                  </Button>
-                )}
               </div>
             );
           })}
