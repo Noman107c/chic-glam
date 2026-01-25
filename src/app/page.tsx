@@ -529,11 +529,11 @@ export default function POSPage() {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
+      <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen bg-[#FAF9F6] overflow-y-auto lg:overflow-hidden">
         {/* RESPONSIVE PANEL LAYOUT */}
         <div className="flex flex-col lg:flex-row flex-1">
           {/* LEFT PANEL - CATEGORIES */}
-          <div className="w-full lg:w-1/4 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
+          <div className="hidden lg:flex w-full lg:w-1/4 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex-col shadow-sm overflow-auto">
             {/* Header */}
             <div className="p-4 bg-white border-b border-gray-100 min-h-[64px] flex items-center gap-3">
               <motion.div
@@ -654,55 +654,71 @@ export default function POSPage() {
           </div>
 
           {/* CENTER PANEL - PRODUCTS (full width on mobile, 50-55% on desktop) */}
-          <div className="flex-1 bg-[#FAF9F6] flex flex-col overflow-hidden">
-            {/* Header with Mobile Category Tabs */}
-            <div className="bg-gradient-to-r from-[#392d22] to-[#2d2018] px-4 py-3 shadow-sm">
-              <h2 className="text-lg md:text-2xl font-serif text-white">
-                {selectedCategory}
-              </h2>
-
-              {/* Mobile Service Type Tabs */}
-              <div className="lg:hidden mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                <motion.button
-                  onClick={() => {
-                    setSelectedServiceType("Beauty Salon");
-                    setSelectedCategory("Hair");
-                  }}
-                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                    selectedServiceType === "Beauty Salon"
-                      ? "bg-white text-[#392d22] shadow-md"
-                      : "bg-[#2d2018] text-white border border-gray-400 hover:border-white"
-                  }`}
-                >
-                  💄 Beauty
-                </motion.button>
-                <motion.button
-                  onClick={() => {
-                    setSelectedServiceType("Gym");
-                    setSelectedCategory("Personal Training");
-                  }}
-                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                    selectedServiceType === "Gym"
-                      ? "bg-white text-[#392d22] shadow-md"
-                      : "bg-[#2d2018] text-white border border-gray-400 hover:border-white"
-                  }`}
-                >
-                  💪 Gym
-                </motion.button>
+          <div className="flex-1 bg-[#FAF9F6] flex flex-col lg:overflow-hidden lg:h-full relative h-auto">
+            {/* Mobile Header */}
+            <div className="lg:hidden p-4 bg-white border-b border-gray-100 flex items-center justify-between shadow-sm z-30 sticky top-0">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                  <img
+                    src="/chic-logo.jpg"
+                    alt="Chic & Glam"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h1 className="font-bold text-[#392d22] font-serif">
+                  Chic & Glam
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="bg-[#FAF9F6] p-2 rounded-full relative">
+                  <ShoppingCart size={20} className="text-[#392d22]" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#d4af37] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                      {cart.length}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
+            {/* Header with Category Tabs */}
+            <div className="bg-gradient-to-r from-[#392d22] to-[#2d2018] px-4 py-3 shadow-sm lg:rounded-tl-2xl z-20">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg md:text-2xl font-serif text-white">
+                  {selectedCategory}
+                </h2>
+                {/* Mobile Service Type Toggles within Header */}
+                <div className="lg:hidden flex bg-[#00000030] p-1 rounded-lg">
+                  <button
+                    onClick={() => {
+                      setSelectedServiceType("Beauty Salon");
+                      setSelectedCategory("Hair");
+                    }}
+                    className={`p-1.5 rounded transition-all ${selectedServiceType === "Beauty Salon" ? "bg-white text-[#392d22]" : "text-white/70"}`}
+                  >
+                    <Scissors size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedServiceType("Gym");
+                      setSelectedCategory("Training");
+                    }}
+                    className={`p-1.5 rounded transition-all ${selectedServiceType === "Gym" ? "bg-white text-[#392d22]" : "text-white/70"}`}
+                  >
+                    <Dumbbell size={14} />
+                  </button>
+                </div>
+              </div>
 
-            {/* Mobile Category Tabs */}
-            <div className="lg:hidden overflow-x-auto border-b border-gray-200 bg-white scrollbar-hide">
-              <div className="flex gap-2 p-3">
+              {/* Mobile Category Tabs */}
+              <div className="lg:hidden mt-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
                 {categories.map((category) => (
                   <motion.button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                       selectedCategory === category
-                        ? "bg-[#392d22] text-white shadow-md"
-                        : "bg-gray-100 text-[#392d22] hover:bg-gray-200"
+                        ? "bg-white text-[#392d22] shadow-sm"
+                        : "bg-[#00000030] text-white/90 hover:bg-[#00000040]"
                     }`}
                   >
                     {category}
@@ -712,7 +728,7 @@ export default function POSPage() {
             </div>
 
             {/* Products Grid - Responsive (2 cols on mobile, 3 on tablet, 2 on desktop) */}
-            <div className="flex-1 overflow-y-auto p-3 md:p-6">
+            <div className="lg:flex-1 lg:overflow-y-auto p-3 md:p-6 pb-24 lg:pb-6">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3 md:gap-4">
                 <AnimatePresence mode="wait">
                   {filteredProducts.map((product) => (
