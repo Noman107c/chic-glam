@@ -1,4 +1,0 @@
-- [x] Import useRouter from 'next/navigation' and LogIn from 'lucide-react'
-- [x] Add router = useRouter() inside the Receipt component
-- [x] Change the header title from h2 to h3 with "Bill / Receipt" and font-serif text-lg class
-- [x] Add login button with LogIn icon and onClick to redirect to /auth/login
