@@ -434,7 +434,7 @@ export default function ServicesPage() {
                 <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
                   {service.name}
                 </h3>
-                <p className="text-sm text-[#2d2d2d] line-clamp-2 leading-relaxed font-medium">
+                <p className="text-sm text-gray-900 line-clamp-2 leading-relaxed font-semibold">
                   {service.description}
                 </p>
               </div>
@@ -489,7 +489,7 @@ export default function ServicesPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-bold text-black uppercase tracking-wide">
                 Service Type
               </label>
               <div className="flex gap-4">
@@ -540,7 +540,7 @@ export default function ServicesPage() {
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-bold text-black uppercase tracking-wide">
               Service Image
             </label>
             <div className="flex gap-4">
@@ -584,11 +584,11 @@ export default function ServicesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-bold text-black uppercase tracking-wide">
               Description
             </label>
             <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] focus:border-transparent min-h-[100px]"
+              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392d22] focus:border-transparent min-h-[100px] text-black font-medium"
               placeholder="Describe the service details..."
               value={formData.description || ""}
               onChange={(e) =>
@@ -636,7 +636,7 @@ export default function ServicesPage() {
                 }
                 className="w-4 h-4 text-[#392d22] rounded border-gray-300 focus:ring-[#392d22]"
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-bold text-black">
                 Mark as Active Service
               </span>
             </label>
