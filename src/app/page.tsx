@@ -252,6 +252,7 @@ interface CartItem {
 }
 
 export default function POSPage() {
+  const [showSplash, setShowSplash] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("Hair");
   const [selectedServiceType, setSelectedServiceType] =
     useState<string>("Beauty Salon");
@@ -264,6 +265,14 @@ export default function POSPage() {
   const [cashReceived, setCashReceived] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
   const [receipt, setReceipt] = useState<any>(null);
+
+  // Splash Screen Timer
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Filter products by service type
   const serviceFilteredProducts = mockProducts.filter(
@@ -482,21 +491,61 @@ export default function POSPage() {
 
   return (
     <>
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div
+            className="fixed inset-0 z-[100] bg-[#FAF9F6] flex items-center justify-center flex-col"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              layoutId="brand-logo"
+              className="relative w-40 h-40 rounded-full overflow-hidden shadow-2xl mb-8"
+              transition={{ duration: 0.8, ease: "circInOut" }}
+            >
+              <img
+                src="/chic-logo.jpg"
+                alt="Chic & Glam Logo"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
+              transition={{ delay: 0.2 }}
+              className="text-4xl md:text-5xl font-serif font-bold text-[#392d22]"
+            >
+              Chic & Glam
+            </motion.h1>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              exit={{ opacity: 0 }}
+              className="h-1 w-24 bg-[#392d22] mt-4 rounded-full"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col lg:flex-row h-screen bg-[#FAF9F6] overflow-hidden">
         {/* RESPONSIVE PANEL LAYOUT */}
         <div className="flex flex-col lg:flex-row flex-1">
           {/* LEFT PANEL - CATEGORIES */}
           <div className="w-full lg:w-1/4 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col shadow-sm overflow-auto">
             {/* Header */}
-            {/* Header */}
             <div className="p-4 bg-white border-b border-gray-100 min-h-[64px] flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0">
+              <motion.div
+                layoutId="brand-logo"
+                className="h-10 w-10 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0"
+              >
                 <img
                   src="/chic-logo.jpg"
                   alt="Chic & Glam"
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </motion.div>
               <div>
                 <h1 className="text-lg font-bold text-[#392d22] font-serif tracking-tight leading-tight">
                   Chic & Glam
