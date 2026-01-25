@@ -1,19 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X, Moon, Sun, LogOut, Home, BarChart3, Clock, DollarSign, Users, Settings, ShoppingCart, Package, FileText } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
-import { Sidebar } from '@/components/Sidebar';
-import { Topbar } from '@/components/Topbar';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Menu,
+  X,
+  Moon,
+  Sun,
+  LogOut,
+  Home,
+  BarChart3,
+  Clock,
+  DollarSign,
+  Users,
+  Settings,
+  ShoppingCart,
+  Package,
+  FileText,
+} from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
+import { Sidebar } from "@/components/Sidebar";
+import { Topbar } from "@/components/Topbar";
 
 const POS_MENU_ITEMS = [
-  { label: 'POS System', href: '/', icon: ShoppingCart },
-  { label: 'Inventory', href: '/inventory', icon: Package },
-  { label: 'Reports', href: '/pos-reports', icon: FileText },
-  { label: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+  { label: "POS System", href: "/", icon: ShoppingCart },
+  { label: "Salon Supplies", href: "/salon-stock", icon: Package },
+  { label: "Reports", href: "/pos-reports", icon: FileText },
+  { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
 ];
 
 export default function POSLayout({ children }: { children: React.ReactNode }) {
@@ -22,9 +37,9 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
   const [isMobile, setIsMobile] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
-    router.push('/auth/login');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userEmail");
+    router.push("/auth/login");
   };
 
   return (
@@ -32,7 +47,7 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
       {/* Custom POS Sidebar */}
       <aside
         className={`
-          ${sidebarOpen ? 'w-64' : 'w-20'} bg-white text-[#392d22] transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-100
+          ${sidebarOpen ? "w-64" : "w-20"} bg-white text-[#392d22] transition-all duration-300 flex flex-col overflow-hidden border-r border-gray-100
         `}
       >
         {/* Logo */}
@@ -67,9 +82,10 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
                     href={item.href}
                     className={`
                       flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors
-                      ${isActive
-                        ? 'bg-[#FAF9F6] text-[#392d22]'
-                        : 'text-gray-600 hover:bg-[#FAF9F6] hover:text-[#392d22]'
+                      ${
+                        isActive
+                          ? "bg-[#FAF9F6] text-[#392d22]"
+                          : "text-gray-600 hover:bg-[#FAF9F6] hover:text-[#392d22]"
                       }
                     `}
                   >
@@ -87,7 +103,7 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 hover:text-red-700 font-light"
-            title={!sidebarOpen ? 'Logout' : ''}
+            title={!sidebarOpen ? "Logout" : ""}
           >
             <LogOut size={20} />
             {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
@@ -97,7 +113,13 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <Topbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} title="POS System" subtitle="Point of Sale" handleLogout={handleLogout} isSidebarOpen={sidebarOpen} />
+        <Topbar
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          title="POS System"
+          subtitle="Point of Sale"
+          handleLogout={handleLogout}
+          isSidebarOpen={sidebarOpen}
+        />
         <main className="flex-1 overflow-y-auto bg-[#FAF9F6]">{children}</main>
       </div>
     </div>
